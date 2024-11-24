@@ -3,9 +3,6 @@
 	"package": "com.rize2knight.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"battle.move.BattleMoveSelectionMixin",
-		"battle.portrait.BattleGuiMixin",
-		"battle.log.BattleMessagePaneMixin",
 		"pc.NicknameEntryWidgetMixin",
 		"pc.PCGUIMixin",
 		"pc.StatWidgetMixin",

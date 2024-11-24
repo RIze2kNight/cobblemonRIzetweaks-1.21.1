@@ -1,9 +1,16 @@
 {
 	"required": true,
-	"package": "com.rize2knight.mixin.client",
+	"package": "com.rize2knight.mixin",
 	"compatibilityLevel": "JAVA_21",
-	"client": [
-		"ExampleClientMixin"
+	"mixins": [
+		"battle.move.BattleMoveSelectionMixin",
+		"battle.portrait.BattleGuiMixin",
+		"battle.log.BattleMessagePaneMixin",
+		"pc.NicknameEntryWidgetMixin",
+		"pc.PCGUIMixin",
+		"pc.StatWidgetMixin",
+		"pc.StorageWidgetMixin",
+		"pc.SummaryMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

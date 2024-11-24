@@ -5,11 +5,10 @@ import org.slf4j.LoggerFactory
 
 object CobblemonUITweaks : ModInitializer {
     private val logger = LoggerFactory.getLogger("cobblemonuitweaks")
+	const val MODID = "cobblemon-ui-tweaks"
 
 	override fun onInitialize() {
-		// This code runs as soon as Minecraft is in a mod-load-ready state.
-		// However, some things (like resources) may still be uninitialized.
-		// Proceed with mild caution.
-		logger.info("Hello Fabric world!")
+
+		logger.info("CobblemonUITweaks running/initializing")
 	}
 }

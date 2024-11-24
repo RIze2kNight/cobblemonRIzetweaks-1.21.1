@@ -1,0 +1,13 @@
+{
+  "cobblemon_ui_tweaks.portrait.pokemon.form": "Form: %1$s",
+  "cobblemon_ui_tweaks.portrait.pokemon.trainer": "Trainer: %1$s",
+  "cobblemon_ui_tweaks.portrait.pokemon.trainer.not_applicable": "Trainer: N/A",
+  "cobblemon_ui_tweaks.move.base_power": "Base Power: %1$s",
+  "cobblemon_ui_tweaks.move.base_power.not_applicable": "Base Power: N/A",
+  "cobblemon_ui_tweaks.move.accuracy": "Accuracy: %1$s",
+  "cobblemon_ui_tweaks.move.accuracy.cant_miss": "Accuracy: Cannot miss",
+  "cobblemon_ui_tweaks.move.effectiveness.immune": "Effectiveness: Immune",
+  "cobblemon_ui_tweaks.move.effectiveness.not_very_effective": "Effectiveness: Not very effective (%1$s)",
+  "cobblemon_ui_tweaks.move.effectiveness.super_effective": "Effectiveness: Super effective (%1$s)",
+  "cobblemon_ui_tweaks.move.effectiveness.neutral": "Effectiveness: Neutral"
+}

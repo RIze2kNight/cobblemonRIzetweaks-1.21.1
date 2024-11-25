@@ -23,12 +23,11 @@ import net.minecraft.resources.ResourceLocation
 import kotlin.math.max
 
 object BattlePortraitHoverRenderer {
-
-    val left = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaks.MODID, "textures/battle/pokemon/summary/left.png")
-    val flippedLeft = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaks.MODID, "textures/battle/pokemon/summary/flipped/left.png")
-    val middle = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaks.MODID, "textures/battle/pokemon/summary/middle.png")
-    val right = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaks.MODID, "textures/battle/pokemon/summary/right.png")
-    val flippedRight = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaks.MODID, "textures/battle/pokemon/summary/flipped/right.png")
+    private val left = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaksClient.MODID, "textures/battle/pokemon/summary/left.png")
+    private val flippedLeft = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaksClient.MODID, "textures/battle/pokemon/summary/flipped/left.png")
+    private val middle = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaksClient.MODID, "textures/battle/pokemon/summary/middle.png")
+    private val right = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaksClient.MODID, "textures/battle/pokemon/summary/right.png")
+    private val flippedRight = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaksClient.MODID, "textures/battle/pokemon/summary/flipped/right.png")
 
     fun render(context: GuiGraphics, mouseX: Int, mouseY: Int) {
         val battle = battle ?: return
@@ -202,11 +201,10 @@ object BattlePortraitHoverRenderer {
     }
 
     private fun getTrainerText(pokemon: ActiveClientBattlePokemon): MutableComponent {
-        if (pokemon.actor.type == ActorType.PLAYER) {
-            return "cobblemon_ui_tweaks.portrait.pokemon.trainer".asTranslated(pokemon.actor.displayName)
-        }
-        else {
-            return "cobblemon_ui_tweaks.portrait.pokemon.trainer.not_applicable".asTranslated()
+        return if (pokemon.actor.type == ActorType.PLAYER) {
+            "cobblemon_ui_tweaks.portrait.pokemon.trainer".asTranslated(pokemon.actor.displayName)
+        } else {
+            "cobblemon_ui_tweaks.portrait.pokemon.trainer.not_applicable".asTranslated()
         }
     }
 

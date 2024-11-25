@@ -16,15 +16,15 @@ import net.minecraft.resources.ResourceLocation
 
 object MoveHoverRenderer {
 
-    val headerLeft = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaks.MODID, "textures/battle/move/header/left.png")
-    val headerMiddle = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaks.MODID, "textures/battle/move/header/middle.png")
-    val headerRight = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaks.MODID, "textures/battle/move/header/right.png")
-    val bodyLeftBorder = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaks.MODID, "textures/battle/move/body/left_border.png")
-    val bodyLeftCorner = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaks.MODID, "textures/battle/move/body/left_corner.png")
-    val bodyBottomBorder = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaks.MODID, "textures/battle/move/body/bottom_border.png")
-    val bodyRightCorner = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaks.MODID, "textures/battle/move/body/right_corner.png")
-    val bodyRightBorder = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaks.MODID, "textures/battle/move/body/right_border.png")
-    val bodyMiddle = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaks.MODID, "textures/battle/move/body/middle.png")
+    private val headerLeft = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaksClient.MODID, "textures/battle/move/header/left.png")
+    private val headerMiddle = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaksClient.MODID, "textures/battle/move/header/middle.png")
+    private val headerRight = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaksClient.MODID, "textures/battle/move/header/right.png")
+    private val bodyLeftBorder = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaksClient.MODID, "textures/battle/move/body/left_border.png")
+    private val bodyLeftCorner = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaksClient.MODID, "textures/battle/move/body/left_corner.png")
+    private val bodyBottomBorder = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaksClient.MODID, "textures/battle/move/body/bottom_border.png")
+    private val bodyRightCorner = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaksClient.MODID, "textures/battle/move/body/right_corner.png")
+    private val bodyRightBorder = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaksClient.MODID, "textures/battle/move/body/right_border.png")
+    private val bodyMiddle = ResourceLocation.fromNamespaceAndPath(CobblemonUITweaksClient.MODID, "textures/battle/move/body/middle.png")
 
     fun render(context: GuiGraphics, x: Float, y: Float, move: MoveTemplate) {
         val bodyWidth = 150

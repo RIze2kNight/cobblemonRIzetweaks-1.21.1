@@ -10,8 +10,5 @@
 		"pc.StatWidgetMixin",
 		"pc.StorageWidgetMixin",
 		"pc.SummaryMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	}
+	]
 }

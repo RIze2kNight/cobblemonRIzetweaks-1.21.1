@@ -7,8 +7,6 @@ import com.cobblemon.mod.common.pokemon.Pokemon
 import net.minecraft.client.Minecraft
 import net.minecraft.client.resources.sounds.SimpleSoundInstance
 import net.minecraft.sounds.SoundEvent
-import kotlin.math.max
-import kotlin.math.min
 
 object GUIHandler {
 

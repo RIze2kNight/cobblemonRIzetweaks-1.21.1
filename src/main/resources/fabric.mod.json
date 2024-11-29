@@ -40,7 +40,8 @@
 		"minecraft": "~1.21.1",
 		"java": ">=21",
 		"fabric-api": "*",
-		"fabric-language-kotlin": "*"
+		"fabric-language-kotlin": "*",
+		"cobblemon": ">=1.6.0"
 	},
 	"suggests": {
 		"another-mod": "*"

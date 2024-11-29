@@ -14,6 +14,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -22,31 +24,22 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import static com.cobblemon.mod.common.api.gui.GuiUtilsKt.blitk;
 import static com.cobblemon.mod.common.client.gui.pc.PCGUI.*;
-import static com.cobblemon.mod.common.util.MiscUtilsKt.cobblemonResource;
 
 @Mixin(PCGUI.class)
 public abstract class PCGUIMixin extends Screen {
 
+    @Unique private static final Logger LOGGER = LoggerFactory.getLogger("cobblemonuitweaks");
     @Shadow(remap = false) private StorageWidget storageWidget;
     @Final @Shadow(remap = false) private ClientPC pc;
-
-    @Shadow @Final public static int BASE_WIDTH;
-
-    @Shadow @Final public static int BASE_HEIGHT;
-
     @Shadow public abstract void render(@NotNull GuiGraphics context, int mouseX, int mouseY, float delta);
 
     @Shadow private Pokemon previewPokemon = null;
-
-    // Add a reference to the JumpPCBoxWidget to manage focus
-    @Unique
-    private JumpPCBoxWidget jumpPCBoxWidget;
+    @Unique private JumpPCBoxWidget jumpPCBoxWidget;        // Add a reference to the JumpPCBoxWidget to manage focus
 
     protected PCGUIMixin(Component component) {
         super(component);
+        LOGGER.info("Initializing PCGUIMixin with storageWidget: {}", storageWidget);
     }
 
     @Inject(method = "keyPressed", at = @At("HEAD"))
@@ -87,24 +80,7 @@ public abstract class PCGUIMixin extends Screen {
         GUIHandler.INSTANCE.onPCClose();
     }
 
-    //Renders the PC Box Jump widget
-    @Inject(method = "init", at = @At(value = "TAIL"), remap = false)
-    private void cobblemon_ui_tweaks$init(CallbackInfo ci) {
-        var PCBox = storageWidget.getBox() + 1;
-
-        jumpPCBoxWidget = new JumpPCBoxWidget(
-                        this.storageWidget,
-                        this.pc,
-                        ((width - BASE_WIDTH) / 2) + 172,
-                        ((height - BASE_HEIGHT) / 2) + 15,
-                        BASE_WIDTH,
-                        BASE_HEIGHT,
-                        Component.translatable("cobblemon.ui.pc.box.title", Component.literal(String.valueOf(PCBox)).withStyle(ChatFormatting.BOLD))
-                );
-
-        this.addRenderableWidget(jumpPCBoxWidget);
-    }
-    //Stop render original PC Box Title
+    //Stop render original PC Box Title and replace with JumpPCBox/rest of code init
     @Inject(
             method = "render",
             at = @At(
@@ -117,42 +93,26 @@ public abstract class PCGUIMixin extends Screen {
     private void stopOGPartyTitleRender(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 
         var pokemon = previewPokemon;
-        var matrices = context.pose();
         var x = (width - BASE_WIDTH) / 2;
         var y = (height - BASE_HEIGHT) / 2;
-        var topSpacerResource = cobblemonResource("textures/gui/pc/pc_spacer_top.png");
-        var bottomSpacerResource = cobblemonResource("textures/gui/pc/pc_spacer_bottom.png");
-        var rightSpacerResource = cobblemonResource("textures/gui/pc/pc_spacer_right.png");
+        var PCBox = storageWidget.getBox() + 1;
 
-        blitk(
-            matrices,
-            topSpacerResource,
-            (x + 86.5) / SCALE,
-            (y + 13) / SCALE,
-            PC_SPACER_WIDTH,
-            PC_SPACER_HEIGHT,
-            SCALE
-        );
+        int newX = ((width - BASE_WIDTH) / 2) + 140;
+        int newY = ((height - BASE_HEIGHT) / 2) + 15;
 
-        blitk(
-                matrices,
-                bottomSpacerResource,
-                (x + 86.5) / SCALE,
-                (y + 189) / SCALE,
-                PC_SPACER_WIDTH,
-                PC_SPACER_HEIGHT,
-                SCALE
-        );
+        if(jumpPCBoxWidget == null || jumpPCBoxWidget.getX() != newX || jumpPCBoxWidget.getY() != newY){        // (Re)Initialises JumpPCBoxWidget when screen resizes
+            jumpPCBoxWidget = new JumpPCBoxWidget(
+                    storageWidget,
+                    pc,
+                    x + 140,
+                    y + 15,
+                    60,
+                    PCGUI.PC_SPACER_HEIGHT,
+                    Component.translatable("cobblemon.ui.pc.box.title", Component.literal(String.valueOf(PCBox)).withStyle(ChatFormatting.BOLD))
+            );
 
-        blitk(
-                matrices,
-                rightSpacerResource,
-                (x + 275.5) / SCALE,
-                (y + 184) / SCALE,
-                64,
-                24,
-                SCALE
-        );
+            this.addRenderableWidget(jumpPCBoxWidget);
+        }
 
         super.render(context, mouseX, mouseY, delta);
 

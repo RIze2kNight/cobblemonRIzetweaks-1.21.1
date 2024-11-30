@@ -30,6 +30,7 @@ import static com.cobblemon.mod.common.client.gui.pc.PCGUI.*;
 public abstract class PCGUIMixin extends Screen {
 
     @Unique private static final Logger LOGGER = LoggerFactory.getLogger("cobblemonuitweaks");
+
     @Shadow(remap = false) private StorageWidget storageWidget;
     @Final @Shadow(remap = false) private ClientPC pc;
     @Shadow public abstract void render(@NotNull GuiGraphics context, int mouseX, int mouseY, float delta);
@@ -80,6 +81,27 @@ public abstract class PCGUIMixin extends Screen {
         GUIHandler.INSTANCE.onPCClose();
     }
 
+    //Renders the PC Box Jump widget
+    @Inject(method = "init", at = @At(value = "TAIL"))
+    private void cobblemon_ui_tweaks$init(CallbackInfo ci) {
+        LOGGER.info("CobblemonUITweaks PCGUIMixin @inject init initialising");
+        LOGGER.error("CobblemonUITweaks PCGUIMixin @inject init error");
+
+        var PCBox = storageWidget.getBox() + 1;
+
+        jumpPCBoxWidget = new JumpPCBoxWidget(
+                this.storageWidget,
+                this.pc,
+                ((width - BASE_WIDTH) / 2) + 140,
+                ((height - BASE_HEIGHT) / 2) + 15,
+                60,
+                PC_SPACER_HEIGHT,
+                Component.translatable("cobblemon.ui.pc.box.title", Component.literal(String.valueOf(PCBox)).withStyle(ChatFormatting.BOLD))
+        );
+
+        this.addRenderableWidget(jumpPCBoxWidget);
+    }
+
     //Stop render original PC Box Title and replace with JumpPCBox/rest of code init
     @Inject(
             method = "render",
@@ -95,24 +117,6 @@ public abstract class PCGUIMixin extends Screen {
         var pokemon = previewPokemon;
         var x = (width - BASE_WIDTH) / 2;
         var y = (height - BASE_HEIGHT) / 2;
-        var PCBox = storageWidget.getBox() + 1;
-
-        int newX = ((width - BASE_WIDTH) / 2) + 140;
-        int newY = ((height - BASE_HEIGHT) / 2) + 15;
-
-        if(jumpPCBoxWidget == null || jumpPCBoxWidget.getX() != newX || jumpPCBoxWidget.getY() != newY){        // (Re)Initialises JumpPCBoxWidget when screen resizes
-            jumpPCBoxWidget = new JumpPCBoxWidget(
-                    storageWidget,
-                    pc,
-                    x + 140,
-                    y + 15,
-                    60,
-                    PCGUI.PC_SPACER_HEIGHT,
-                    Component.translatable("cobblemon.ui.pc.box.title", Component.literal(String.valueOf(PCBox)).withStyle(ChatFormatting.BOLD))
-            );
-
-            this.addRenderableWidget(jumpPCBoxWidget);
-        }
 
         super.render(context, mouseX, mouseY, delta);
 

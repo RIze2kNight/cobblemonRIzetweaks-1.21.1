@@ -9,6 +9,8 @@
 		"pc.PCGUIMixin",
 		"pc.StatWidgetMixin",
 		"pc.StorageWidgetMixin",
-		"pc.SummaryMixin"
+		"pc.SummaryMixin",
+		"HA.HighlightPCHAMixin",
+		"HA.HighlightSummaryHAMixin"
 	]
 }

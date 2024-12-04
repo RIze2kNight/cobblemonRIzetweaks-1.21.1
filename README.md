@@ -13,3 +13,4 @@ OG Features:
 
 Moi Features(Yay I'm not a bum):
 - Edit PC Box number to jump to it (Press Enter to jump)
+- Hidden Ability Highlighter in PC and Summary

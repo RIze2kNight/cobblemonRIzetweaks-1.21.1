@@ -33,9 +33,10 @@ public abstract class PCGUIMixin extends Screen {
 
     @Shadow(remap = false) private StorageWidget storageWidget;
     @Final @Shadow(remap = false) private ClientPC pc;
+
     @Shadow public abstract void render(@NotNull GuiGraphics context, int mouseX, int mouseY, float delta);
 
-    @Shadow private Pokemon previewPokemon = null;
+    @Shadow(remap = false) private Pokemon previewPokemon = null;
     @Unique private JumpPCBoxWidget jumpPCBoxWidget;        // Add a reference to the JumpPCBoxWidget to manage focus
 
     protected PCGUIMixin(Component component) {
@@ -85,13 +86,13 @@ public abstract class PCGUIMixin extends Screen {
     @Inject(method = "init", at = @At(value = "TAIL"))
     private void cobblemon_ui_tweaks$init(CallbackInfo ci) {
         LOGGER.info("CobblemonUITweaks PCGUIMixin @inject init initialising");
-        LOGGER.error("CobblemonUITweaks PCGUIMixin @inject init error");
 
         var PCBox = storageWidget.getBox() + 1;
 
         jumpPCBoxWidget = new JumpPCBoxWidget(
                 this.storageWidget,
                 this.pc,
+                this.previewPokemon,
                 ((width - BASE_WIDTH) / 2) + 140,
                 ((height - BASE_HEIGHT) / 2) + 15,
                 60,
@@ -108,11 +109,11 @@ public abstract class PCGUIMixin extends Screen {
             at = @At(
                     value = "INVOKE",
                     target = "Lcom/cobblemon/mod/common/client/render/RenderHelperKt;drawScaledText$default(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/network/chat/MutableComponent;Ljava/lang/Number;Ljava/lang/Number;FLjava/lang/Number;IIZZLjava/lang/Integer;Ljava/lang/Integer;ILjava/lang/Object;)V",
-                    ordinal = 12// Target the 13th/Box Label occurrence (0-based index)
+                    ordinal = 12// Target the 13th Box Label occurrence (0-based index)
             ),
             cancellable = true               // Allow cancellation if necessary
     )
-    private void stopOGPartyTitleRender(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    private void overridePCRender(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 
         var pokemon = previewPokemon;
         var x = (width - BASE_WIDTH) / 2;
@@ -121,18 +122,20 @@ public abstract class PCGUIMixin extends Screen {
         super.render(context, mouseX, mouseY, delta);
 
         /// Item Tooltip
-        if (pokemon != null && !pokemon.getHeldItem$common().isEmpty()) {
-            int itemX = x + 3;
-            int itemY = y + 98;
-            boolean itemHovered =
-                    (mouseX >= itemX && mouseX <= (itemX + 16)) && (mouseY >= itemY && mouseY <= (itemY + 16));
-            if (itemHovered) {
-                context.renderTooltip(
-                        Minecraft.getInstance().font,
-                        pokemon.heldItemNoCopy$common(),
-                        mouseX,
-                        mouseY
-                );
+        if (pokemon != null) {
+            if (!pokemon.getHeldItem$common().isEmpty()) {
+                int itemX = x + 3;
+                int itemY = y + 98;
+                boolean itemHovered =
+                        (mouseX >= itemX && mouseX <= (itemX + 16)) && (mouseY >= itemY && mouseY <= (itemY + 16));
+                if (itemHovered) {
+                    context.renderTooltip(
+                            Minecraft.getInstance().font,
+                            pokemon.heldItemNoCopy$common(),
+                            mouseX,
+                            mouseY
+                    );
+                }
             }
         }
 

@@ -17,8 +17,11 @@ import com.cobblemon.mod.common.client.gui.pc.PCGUI.Companion.SCALE
 import com.cobblemon.mod.common.client.gui.pc.StorageWidget
 import com.cobblemon.mod.common.client.render.drawScaledText
 import com.cobblemon.mod.common.client.storage.ClientPC
+import com.cobblemon.mod.common.pokemon.Pokemon
+import com.cobblemon.mod.common.util.asTranslated
 import com.cobblemon.mod.common.util.cobblemonResource
 import com.mojang.blaze3d.platform.InputConstants
+import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.EditBox
@@ -29,6 +32,7 @@ import org.slf4j.LoggerFactory
 open class JumpPCBoxWidget(
     private var storageWidget: StorageWidget,
     private var pc: ClientPC,
+    private var pokemon: Pokemon?,
     x: Int, y: Int, width: Int, height: Int, pcBoxText: Component
 ): EditBox(
     Minecraft.getInstance().font,

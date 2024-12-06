@@ -3,6 +3,7 @@ A port of Cobblemon UI Tweaks by Landon-Wills/Landojw for 1.6 Cobblemon snapshot
 Modified under the terms of the MIT License.
 
 Credit goes to Landojw for the original code
+
 Original Repository: https://github.com/landon-wills/cobblemon-ui-tweaks
 
 OG Features refactored to 1.21.1:

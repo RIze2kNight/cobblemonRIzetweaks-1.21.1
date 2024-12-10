@@ -8,20 +8,12 @@
 
 package com.rize2knight
 
-import com.cobblemon.mod.common.api.gui.blitk
 import com.cobblemon.mod.common.api.text.bold
 import com.cobblemon.mod.common.client.CobblemonResources
-import com.cobblemon.mod.common.client.gui.pc.PCGUI.Companion.PC_SPACER_HEIGHT
-import com.cobblemon.mod.common.client.gui.pc.PCGUI.Companion.PC_SPACER_WIDTH
-import com.cobblemon.mod.common.client.gui.pc.PCGUI.Companion.SCALE
 import com.cobblemon.mod.common.client.gui.pc.StorageWidget
 import com.cobblemon.mod.common.client.render.drawScaledText
 import com.cobblemon.mod.common.client.storage.ClientPC
-import com.cobblemon.mod.common.pokemon.Pokemon
-import com.cobblemon.mod.common.util.asTranslated
-import com.cobblemon.mod.common.util.cobblemonResource
 import com.mojang.blaze3d.platform.InputConstants
-import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.EditBox
@@ -32,8 +24,8 @@ import org.slf4j.LoggerFactory
 open class JumpPCBoxWidget(
     private var storageWidget: StorageWidget,
     private var pc: ClientPC,
-    private var pokemon: Pokemon?,
-    x: Int, y: Int, width: Int, height: Int, pcBoxText: Component
+    x: Int,
+    y: Int, width: Int, height: Int, pcBoxText: Component
 ): EditBox(
     Minecraft.getInstance().font,
     x, y, width, height, pcBoxText
@@ -72,11 +64,6 @@ open class JumpPCBoxWidget(
 
     override fun renderWidget(context: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
         if (cursorPosition != value.length) moveCursorToEnd(Screen.hasShiftDown())
-
-        val matrices = context.pose()
-        val topSpacerResource = cobblemonResource("textures/gui/pc/pc_spacer_top.png")
-        val bottomSpacerResource = cobblemonResource("textures/gui/pc/pc_spacer_bottom.png")
-        val rightSpacerResource = cobblemonResource("textures/gui/pc/pc_spacer_right.png")
         val currentBox = this.storageWidget.box + 1     // Dynamically fetch current box for rendering
 
         drawScaledText(
@@ -86,36 +73,6 @@ open class JumpPCBoxWidget(
             x = x + 172 - 140,
             y = y,
             centered = true
-        )
-
-        blitk(
-            matrixStack = matrices,
-            texture = topSpacerResource,
-            x = (x + 86.5 - 140) / SCALE,
-            y = (y + 13 - 15) / SCALE,
-            width = PC_SPACER_WIDTH,
-            height = PC_SPACER_HEIGHT,
-            scale = SCALE
-        )
-
-        blitk(
-            matrixStack = matrices,
-            texture = bottomSpacerResource,
-            x = (x + 86.5 - 140) / SCALE,
-            y = (y + 189 - 15) / SCALE,
-            width = PC_SPACER_WIDTH,
-            height = PC_SPACER_HEIGHT,
-            scale = SCALE
-        )
-
-        blitk(
-            matrixStack = matrices,
-            texture = rightSpacerResource,
-            x = (x + 275.5 - 140) / SCALE,
-            y = (y + 184 - 15) / SCALE,
-            width = 64,
-            height = 24,
-            scale = SCALE
         )
     }
 

@@ -1,6 +1,5 @@
 package com.rize2knight
 
-import com.cobblemon.mod.common.api.Priority
 import com.cobblemon.mod.common.api.text.bold
 import com.cobblemon.mod.common.client.gui.pc.PCGUI.Companion.SCALE
 import com.cobblemon.mod.common.client.gui.summary.widgets.screens.info.InfoOneLineWidget
@@ -17,7 +16,7 @@ import org.slf4j.LoggerFactory
 
 object HAHighlighterRenderer {
     var LOGGER: Logger = LoggerFactory.getLogger("cobblemonuitweaks")
-    val goldStyle = Style.EMPTY.withColor(TextColor.fromRgb(0xFFD700))
+    private val goldStyle: Style = Style.EMPTY.withColor(TextColor.fromRgb(0xFFD700))
 
     fun renderPC(context: GuiGraphics, x: Int, y: Int, pokemon: Pokemon) {
         if(hasHiddenAbility(pokemon)) {
@@ -34,7 +33,7 @@ object HAHighlighterRenderer {
         }
     }
 
-    fun renderSummary(context: GuiGraphics, x: Int, y: Int, ROW_HEIGHT: Int, width: Int, pokemon: Pokemon): InfoOneLineWidget? {
+    fun renderSummary(x: Int, y: Int, ROW_HEIGHT: Int, width: Int, pokemon: Pokemon): InfoOneLineWidget? {
         if(hasHiddenAbility(pokemon)) {
 //            LOGGER.info("CobblemonUITweaks highlightSummaryHA")
             val abilityWidget = InfoOneLineWidget(
@@ -49,7 +48,7 @@ object HAHighlighterRenderer {
         return null
     }
 
-    fun hasHiddenAbility(pokemon: Pokemon): Boolean = pokemon.form.abilities
+    private fun hasHiddenAbility(pokemon: Pokemon): Boolean = pokemon.form.abilities
         .filterIsInstance<HiddenAbility>()
         .any { ability -> pokemon.ability.template == ability.template }
 }

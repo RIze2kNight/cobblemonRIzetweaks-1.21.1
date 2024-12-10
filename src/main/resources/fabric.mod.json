@@ -2,11 +2,10 @@
 	"schemaVersion": 1,
 	"id": "cobblemonuitweaks",
 	"version": "${version}",
-	"name": "CobblemonUITweaks",
-	"description": "A port of Cobblemon UI Tweaks for 1.21.1, a QoL mod for cobblemon",
+	"name": "CobblemonRIzeTweaks",
+	"description": "A QoL mod for cobblemon",
 	"authors": [
-		"RIze2kNight",
-		"LandoJw"
+		"RIze2kNight"
 	],
 	"contact": {
 		"sources": "https://github.com/RIze2kNight/cobblemonuitweaks-1.21.1/tree/official"

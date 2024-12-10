@@ -1,4 +1,4 @@
-package com.rize2knight.mixin.HA;
+package com.rize2knight.mixin.pc;
 
 import com.cobblemon.mod.common.client.gui.summary.widgets.SoundlessWidget;
 import com.cobblemon.mod.common.client.gui.summary.widgets.screens.info.InfoWidget;
@@ -15,11 +15,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InfoWidget.class)
-public abstract class HighlightSummaryHAMixin extends SoundlessWidget {
+public abstract class InfoWidgetMixin extends SoundlessWidget {
     @Shadow(remap = false) @Final private static int ROW_HEIGHT;
     @Shadow(remap = false) @Final private Pokemon pokemon;
 
-    public HighlightSummaryHAMixin(int pX, int pY, int pWidth, int pHeight, @NotNull Component component) {
+    public InfoWidgetMixin(int pX, int pY, int pWidth, int pHeight, @NotNull Component component) {
         super(pX, pY, pWidth, pHeight, component);
     }
 
@@ -31,7 +31,7 @@ public abstract class HighlightSummaryHAMixin extends SoundlessWidget {
     )
     protected void renderWidget(GuiGraphics context, int pMouseX, int pMouseY, float pPartialTicks, CallbackInfo ci) {
         if(pokemon != null){
-            var abilityWidget = HAHighlighterRenderer.INSTANCE.renderSummary(context,this.getX(),this.getY(),this.ROW_HEIGHT,this.width,pokemon);
+            var abilityWidget = HAHighlighterRenderer.INSTANCE.renderSummary(this.getX(),this.getY(), ROW_HEIGHT,this.width,pokemon);
             if(abilityWidget != null){
                 abilityWidget.render(context, pMouseX, pMouseY, pPartialTicks);
             }

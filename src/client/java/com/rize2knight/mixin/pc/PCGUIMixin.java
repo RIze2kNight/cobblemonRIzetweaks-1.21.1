@@ -1,13 +1,12 @@
 package com.rize2knight.mixin.pc;
 
 import com.cobblemon.mod.common.pokemon.Pokemon;
-import com.rize2knight.GUIHandler;
 import com.cobblemon.mod.common.client.gui.pc.PCGUI;
 import com.cobblemon.mod.common.client.gui.pc.StorageWidget;
-import com.cobblemon.mod.common.client.keybind.CobblemonKeyBinds;
 import com.cobblemon.mod.common.client.storage.ClientPC;
-import com.cobblemon.mod.common.mixin.accessor.KeyBindingAccessor;
+import com.rize2knight.HAHighlighterRenderer;
 import com.rize2knight.JumpPCBoxWidget;
+import com.rize2knight.OverridedUIRenderer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -23,7 +22,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import static com.cobblemon.mod.common.client.gui.pc.PCGUI.*;
 
 @Mixin(PCGUI.class)
@@ -44,25 +42,8 @@ public abstract class PCGUIMixin extends Screen {
         LOGGER.info("Initializing PCGUIMixin with storageWidget: {}", storageWidget);
     }
 
-    @Inject(method = "keyPressed", at = @At("HEAD"))
-    private void cobblemon_ui_tweaks$keyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
-        var summaryKey = (KeyBindingAccessor) CobblemonKeyBinds.INSTANCE.getSUMMARY();
-        if (keyCode == summaryKey.boundKey().getValue()) {
-            GUIHandler.INSTANCE.onSummaryPressFromPC((PCGUI)(Object)this);
-        }
-    }
-
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        var pastureWidget = storageWidget.getPastureWidget();
-        if (pastureWidget != null && pastureWidget.getPastureScrollList().isMouseOver(mouseX, mouseY)) {
-            pastureWidget.getPastureScrollList().mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
-        }
-        else {
-            var newBox = (storageWidget.getBox() - (int)verticalAmount) % this.pc.getBoxes().size();
-            storageWidget.setBox(newBox);
-        }
-
         // If JumpPCBoxWidget is set, unfocus the EditBox to prevent de-synced box numbers
         if (jumpPCBoxWidget != null) {
             jumpPCBoxWidget.setFocused(false);
@@ -70,16 +51,6 @@ public abstract class PCGUIMixin extends Screen {
 
 
         return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
-    }
-
-    @Inject(method = "closeNormally", at = @At("TAIL"), remap = false)
-    private void cobblemon_ui_tweaks$closeNormally(CallbackInfo ci) {
-        GUIHandler.INSTANCE.onPCClose();
-    }
-
-    @Inject(method = "keyPressed", at = @At(value = "INVOKE", target = "Lcom/cobblemon/mod/common/client/gui/pc/PCGUI;playSound(Lnet/minecraft/sounds/SoundEvent;)V"))
-    private void cobblemon_ui_tweaks$keyPressedToClosePC(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
-        GUIHandler.INSTANCE.onPCClose();
     }
 
     //Renders the PC Box Jump widget
@@ -92,7 +63,6 @@ public abstract class PCGUIMixin extends Screen {
         jumpPCBoxWidget = new JumpPCBoxWidget(
                 this.storageWidget,
                 this.pc,
-                this.previewPokemon,
                 ((width - BASE_WIDTH) / 2) + 140,
                 ((height - BASE_HEIGHT) / 2) + 15,
                 60,
@@ -137,6 +107,9 @@ public abstract class PCGUIMixin extends Screen {
                     );
                 }
             }
+
+            OverridedUIRenderer.INSTANCE.renderPC(context,x,y);
+            HAHighlighterRenderer.INSTANCE.renderPC(context,x,y,pokemon);
         }
 
         ci.cancel();

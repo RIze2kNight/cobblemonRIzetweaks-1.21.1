@@ -39,11 +39,6 @@ open class JumpPCBoxWidget(
         setSelectedPCBox(storageWidget.box + 1)
     }
 
-    override fun setFocused(focused: Boolean) {
-        super.setFocused(focused)
-        this.value = (storageWidget.box + 1).toString()
-    }
-
     private fun setSelectedPCBox(pcBox: Int) {
         if (isFocused) {
             isFocused = false
@@ -53,7 +48,7 @@ open class JumpPCBoxWidget(
 
     private fun updateNewPCBox() {
         val newPCBox = this.value.toIntOrNull()
-        if (newPCBox != null && newPCBox > 0 && newPCBox <= pc.boxes.size && newPCBox != storageWidget.box) {
+        if (newPCBox != null && newPCBox > 0 && newPCBox <= pc.boxes.size && newPCBox - 1 != storageWidget.box) {
             storageWidget.box = newPCBox - 1 // Update storage widget
             value = (newPCBox).toString()
         }
@@ -77,15 +72,18 @@ open class JumpPCBoxWidget(
     }
 
     override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
-        if (keyCode == InputConstants.KEY_RETURN) { // Enter key
-            updateNewPCBox()
-            this.isFocused = false
-            return true
-        } else if (keyCode == InputConstants.KEY_ESCAPE) { // Escape key to cancel changes
-            this.value = storageWidget.box.toString()
-            this.isFocused = false
-            return true
+        when(keyCode) {
+            InputConstants.KEY_RETURN -> {
+                updateNewPCBox()
+                this.isFocused = false
+                return true
+            }
+            InputConstants.KEY_ESCAPE, InputConstants.KEY_RIGHT, InputConstants.KEY_LEFT -> {
+                this.isFocused = false
+                return true
+            }
         }
+
         return super.keyPressed(keyCode, scanCode, modifiers)
     }
 }

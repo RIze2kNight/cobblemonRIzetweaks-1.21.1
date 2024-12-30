@@ -28,7 +28,7 @@ import static com.cobblemon.mod.common.client.gui.pc.PCGUI.*;
 @Mixin(value = PCGUI.class, priority = 1001)
 public abstract class PCGUIMixin extends Screen {
 
-    @Unique private static final Logger LOGGER = LoggerFactory.getLogger("cobblemonuitweaks");
+    @Unique private static final Logger LOGGER = LoggerFactory.getLogger("cobblemonrizetweaks");
 
     @Shadow(remap = false) private StorageWidget storageWidget;
     @Final @Shadow(remap = false) private ClientPC pc;
@@ -67,7 +67,7 @@ public abstract class PCGUIMixin extends Screen {
     //Renders the PC Box Jump widget
     @Inject(method = "init", at = @At(value = "TAIL"))
     private void cobblemon_ui_tweaks$init(CallbackInfo ci) {
-        LOGGER.info("CobblemonUITweaks PCGUIMixin @inject init initialising");
+        LOGGER.info("CobblemonRIzeTweaks PCGUIMixin @inject init initialising");
 
         var PCBox = storageWidget.getBox() + 1;
 

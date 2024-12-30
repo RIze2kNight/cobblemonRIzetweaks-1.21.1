@@ -4,10 +4,10 @@ import net.fabricmc.api.ModInitializer
 import org.slf4j.LoggerFactory
 
 object CobblemonUITweaks : ModInitializer {
-    private val logger = LoggerFactory.getLogger("cobblemonuitweaks")
+    private val logger = LoggerFactory.getLogger("cobblemonrizetweaks")
 
 	override fun onInitialize() {
 
-		logger.info("CobblemonUITweaks running/initializing")
+		logger.info("CobblemonRIzeTweaks running/initializing")
 	}
 }

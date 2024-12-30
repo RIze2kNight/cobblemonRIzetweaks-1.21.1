@@ -30,11 +30,11 @@ open class JumpPCBoxWidget(
     Minecraft.getInstance().font,
     x, y, width, height, pcBoxText
 ) {
-    private val logger = LoggerFactory.getLogger("cobblemonuitweaks")
+    private val logger = LoggerFactory.getLogger("cobblemonrizetweaks")
 
     init {
         this.setFilter { input -> input.isEmpty() || input.all { it.isDigit() } }
-        logger.info("CobblemonUITweaks JumpPCBoxWidget init")
+        logger.info("CobblemonRIzeTweaks JumpPCBoxWidget init")
     }
 
     override fun setFocused(bl: Boolean) {

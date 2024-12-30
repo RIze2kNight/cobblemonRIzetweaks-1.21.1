@@ -49,7 +49,6 @@ public abstract class PCGUIMixin extends Screen {
             jumpPCBoxWidget.setFocused(false);
         }
 
-
         return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
     }
 

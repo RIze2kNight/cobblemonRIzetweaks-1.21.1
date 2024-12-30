@@ -43,6 +43,6 @@
 		"cobblemon": ">=1.6.0"
 	},
 	"suggests": {
-		"another-mod": "*"
+		"cobblemon-ui-tweaks": ">=1.0.7"
 	}
 }

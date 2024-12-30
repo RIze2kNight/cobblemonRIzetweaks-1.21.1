@@ -1,9 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id 'fabric-loom' version '1.8-SNAPSHOT'
+	id 'fabric-loom' version '1.9-SNAPSHOT'
 	id 'maven-publish'
-	id "org.jetbrains.kotlin.jvm" version "2.0.21"
+	id "org.jetbrains.kotlin.jvm" version "2.1.0"
 }
 
 version = project.mod_version
@@ -21,11 +21,11 @@ repositories {
 	// for more information about repositories.
 
 	mavenLocal()
+	mavenCentral()
 	maven { url "https://maven.shedaniel.me/" }
 	maven { url 'https://maven.impactdev.net/repository/development/' }
-
 	maven { url = "${project.projectDir}/deps/"}
-	maven { name 'TerraformersMC'; url 'https://maven.terraformersmc.com/' }
+//	maven { name 'TerraformersMC'; url 'https://maven.terraformersmc.com/' }
 }
 
 loom {
@@ -52,11 +52,11 @@ dependencies {
 
 	modImplementation("dev.architectury:architectury-fabric:13.0.8")
 	modImplementation("com.cobblemon:fabric:1.6.0+1.21.1-SNAPSHOT")
-//	modImplementation("com.cobblemon:fabric:1.6.0+1.21.1-main-d3ae4cd")
-//
+
+//	modImplementation(files("/deps/cobblemonuitweaks/cobblemon-ui-tweaks-1.0.7.jar"))
+//	modImplementation(files("/deps/MoreCobblemonTweaks/MoreCobblemonTweaks-fabric-1.0.2.jar"))
 //	modImplementation("me.axieum.mcmod.authme:authme:8.0.0+1.21")
 //	modImplementation("com.terraformersmc:modmenu:11.0.0-beta.1")
-
 }
 
 processResources {
@@ -85,6 +85,10 @@ java {
 
 	sourceCompatibility = JavaVersion.VERSION_21
 	targetCompatibility = JavaVersion.VERSION_21
+
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
 }
 
 jar {

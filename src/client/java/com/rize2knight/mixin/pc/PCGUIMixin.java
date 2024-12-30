@@ -6,12 +6,12 @@ import com.cobblemon.mod.common.client.gui.pc.StorageWidget;
 import com.cobblemon.mod.common.client.storage.ClientPC;
 import com.rize2knight.HAHighlighterRenderer;
 import com.rize2knight.JumpPCBoxWidget;
-import com.rize2knight.OverridedUIRenderer;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,10 +21,11 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static com.cobblemon.mod.common.client.gui.pc.PCGUI.*;
 
-@Mixin(PCGUI.class)
+@Mixin(value = PCGUI.class, priority = 1001)
 public abstract class PCGUIMixin extends Screen {
 
     @Unique private static final Logger LOGGER = LoggerFactory.getLogger("cobblemonuitweaks");
@@ -44,9 +45,20 @@ public abstract class PCGUIMixin extends Screen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        // If JumpPCBoxWidget is set, unfocus the EditBox to prevent de-synced box numbers
-        if (jumpPCBoxWidget != null) {
-            jumpPCBoxWidget.setFocused(false);
+        if (FabricLoader.getInstance().isModLoaded("cobblemon-ui-tweaks")){
+            var pastureWidget = storageWidget.getPastureWidget();
+            if (pastureWidget != null && pastureWidget.getPastureScrollList().isMouseOver(mouseX, mouseY)) {
+                pastureWidget.getPastureScrollList().mouseScrolled(mouseX, mouseY, horizontalAmount,verticalAmount);
+            }
+            else {
+                var newBox = (storageWidget.getBox() - (int)verticalAmount) % this.pc.getBoxes().size();
+                storageWidget.setBox(newBox);
+            }
+
+            // If JumpPCBoxWidget is set, unfocus the EditBox to prevent de-synced box numbers
+            if (jumpPCBoxWidget != null) {
+                jumpPCBoxWidget.setFocused(false);
+            }
         }
 
         return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
@@ -72,15 +84,26 @@ public abstract class PCGUIMixin extends Screen {
         this.addRenderableWidget(jumpPCBoxWidget);
     }
 
-    //Stop render original PC Box Title and replace with JumpPCBox/rest of code init
-    @Inject(
+    @ModifyArg(
             method = "render",
             at = @At(
                     value = "INVOKE",
                     target = "Lcom/cobblemon/mod/common/client/render/RenderHelperKt;drawScaledText$default(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/network/chat/MutableComponent;Ljava/lang/Number;Ljava/lang/Number;FLjava/lang/Number;IIZZLjava/lang/Integer;Ljava/lang/Integer;ILjava/lang/Object;)V",
                     ordinal = 12// Target the 13th Box Label occurrence (0-based index)
             ),
-            cancellable = true               // Allow cancellation if necessary
+            index = 2
+    )
+    private MutableComponent modifyPCBoxLabelLogic(MutableComponent originalText) {
+        if (jumpPCBoxWidget.isFocused()){
+            return Component.empty();
+        }
+        return originalText;
+    }
+
+    //Stop render original PC Box Title and replace with JumpPCBox/rest of code init
+    @Inject(
+            method = "render",
+            at = @At(value = "TAIL")
     )
     private void overridePCRender(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 
@@ -88,29 +111,7 @@ public abstract class PCGUIMixin extends Screen {
         var x = (width - BASE_WIDTH) / 2;
         var y = (height - BASE_HEIGHT) / 2;
 
+        if (pokemon != null){ HAHighlighterRenderer.INSTANCE.renderPC(context,x,y,pokemon); }
         super.render(context, mouseX, mouseY, delta);
-
-        /// Item Tooltip
-        if (pokemon != null) {
-            if (!pokemon.getHeldItem$common().isEmpty()) {
-                int itemX = x + 3;
-                int itemY = y + 98;
-                boolean itemHovered =
-                        (mouseX >= itemX && mouseX <= (itemX + 16)) && (mouseY >= itemY && mouseY <= (itemY + 16));
-                if (itemHovered) {
-                    context.renderTooltip(
-                            Minecraft.getInstance().font,
-                            pokemon.heldItemNoCopy$common(),
-                            mouseX,
-                            mouseY
-                    );
-                }
-            }
-
-            OverridedUIRenderer.INSTANCE.renderPC(context,x,y);
-            HAHighlighterRenderer.INSTANCE.renderPC(context,x,y,pokemon);
-        }
-
-        ci.cancel();
     }
 }

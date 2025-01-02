@@ -30,20 +30,20 @@ open class JumpPCBoxWidget(
     Minecraft.getInstance().font,
     x, y, width, height, pcBoxText
 ) {
-    private val logger = LoggerFactory.getLogger("cobblemonuitweaks")
+    private val logger = LoggerFactory.getLogger("cobblemonrizetweaks")
 
     init {
         this.setFilter { input -> input.isEmpty() || input.all { it.isDigit() } }
-        logger.info("CobblemonUITweaks JumpPCBoxWidget init")
+        logger.info("CobblemonRIzeTweaks JumpPCBoxWidget init")
 
-        setSelectedPCBox(storageWidget.box + 1)
+        this.isFocused = false
     }
 
-    private fun setSelectedPCBox(pcBox: Int) {
-        if (isFocused) {
-            isFocused = false
+    override fun setFocused(bl: Boolean) {
+        if (value != (storageWidget.box + 1).toString()){
+            value = (storageWidget.box + 1).toString()
         }
-        value = pcBox.toString() // Set the value directly
+        super.setFocused(bl)
     }
 
     private fun updateNewPCBox() {
@@ -53,7 +53,7 @@ open class JumpPCBoxWidget(
             value = (newPCBox).toString()
         }
         else{
-            this.value = storageWidget.box.toString()
+            this.value = (storageWidget.box + 1).toString()
         }
     }
 
@@ -61,14 +61,17 @@ open class JumpPCBoxWidget(
         if (cursorPosition != value.length) moveCursorToEnd(Screen.hasShiftDown())
         val currentBox = this.storageWidget.box + 1     // Dynamically fetch current box for rendering
 
-        drawScaledText(
-            context = context,
-            font = CobblemonResources.DEFAULT_LARGE,
-            text = Component.translatable("cobblemon.ui.pc.box.title", if (isFocused) "$value|" else currentBox).bold(),
-            x = x + 172 - 140,
-            y = y,
-            centered = true
-        )
+        if (isFocused){
+            drawScaledText(
+                context = context,
+                font = CobblemonResources.DEFAULT_LARGE,
+                text = Component.translatable("cobblemon.ui.pc.box.title", if (isFocused) "$value|" else currentBox).bold(),
+                x = x + 172 - 140,
+                y = y,
+                centered = true
+            )
+        }
+
     }
 
     override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {

@@ -15,7 +15,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 object HAHighlighterRenderer {
-    var LOGGER: Logger = LoggerFactory.getLogger("cobblemonuitweaks")
+    var LOGGER: Logger = LoggerFactory.getLogger("cobblemonrizetweaks")
     private val goldStyle: Style = Style.EMPTY.withColor(TextColor.fromRgb(0xFFD700))
 
     fun renderPC(context: GuiGraphics, x: Int, y: Int, pokemon: Pokemon) {

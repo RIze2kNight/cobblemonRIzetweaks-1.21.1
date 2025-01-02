@@ -35,6 +35,8 @@ open class JumpPCBoxWidget(
     init {
         this.setFilter { input -> input.isEmpty() || input.all { it.isDigit() } }
         logger.info("CobblemonRIzeTweaks JumpPCBoxWidget init")
+
+        this.isFocused = false
     }
 
     override fun setFocused(bl: Boolean) {

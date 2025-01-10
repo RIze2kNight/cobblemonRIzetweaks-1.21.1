@@ -1,9 +1,11 @@
 {
-	"required": true,
+	"required": false,
 	"package": "com.rize2knight.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
 		"pc.PCGUIMixin",
-		"pc.InfoWidgetMixin"
+		"pc.InfoWidgetMixin",
+		"battle.move.BattleMoveSelectionMixin",
+		"battle.move.MoveHoverRendererMixin"
 	]
 }

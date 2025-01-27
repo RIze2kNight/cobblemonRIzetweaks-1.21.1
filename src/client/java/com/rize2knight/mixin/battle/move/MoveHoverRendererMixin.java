@@ -12,7 +12,6 @@ import com.cobblemon.mod.common.client.battle.ClientBattle;
 import com.rize2knight.BattleTypeList;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.network.chat.contents.TranslatableContents;
@@ -31,8 +30,9 @@ public abstract class MoveHoverRendererMixin {
 
     @Inject(method = "getMoveEffectiveness", at = @At("HEAD"), cancellable = true)
     public void getMoveEffectiveness(MoveTemplate move, CallbackInfoReturnable<MutableComponent> ci){
-        if (!FabricLoader.getInstance().isModLoaded("cobblemon-ui-tweaks")) {
-            return; // Skip if the mod is not present
+        if (!FabricLoader.getInstance().isModLoaded("cobblemon-ui-tweaks") ||
+            move.getDamageCategory() == DamageCategories.INSTANCE.getSTATUS()) {
+            return;
         }
         var battle = CobblemonClient.INSTANCE.getBattle();
         if (battle == null) { return; }
@@ -40,36 +40,24 @@ public abstract class MoveHoverRendererMixin {
         var opponent = battle.getSide2().getActiveClientBattlePokemon().iterator().next().getBattlePokemon();
         if (opponent == null) { return; }
 
-        var aspects = opponent.getProperties().getAspects();
-        var opponentForm = opponent.getSpecies().getForm(aspects);
-        if (move.getDamageCategory() == DamageCategories.INSTANCE.getSTATUS()) {
-            return;
-        }
-
         List<ElementalType> typeChangeList = getTypeChanges(battle, BattleTypeList.getBattleTypeChanges());
-        ElementalType primaryType = opponentForm.getPrimaryType();
-        ElementalType secondaryType = opponentForm.getSecondaryType();
-
         if (!typeChangeList.isEmpty()) {
-            primaryType = typeChangeList.get(0);
-            secondaryType = typeChangeList.size() > 1 ? typeChangeList.get(1) : secondaryType;
-        }
+            ElementalType primaryType = typeChangeList.get(0);
+            ElementalType secondaryType = typeChangeList.size() > 1 ? typeChangeList.get(1) : null;
 
-        ci.setReturnValue(MoveEffectivenessCalculator.INSTANCE.getMoveEffectiveness(move.getElementalType(), primaryType, secondaryType));
-        ci.cancel();
+            ci.setReturnValue(MoveEffectivenessCalculator.INSTANCE.getMoveEffectiveness(move.getElementalType(), primaryType, secondaryType));
+            ci.cancel();
+        }
     }
 
     private List<ElementalType> getTypeChanges(ClientBattle battle, Map<String, String> typeChanges){
         List<ElementalType> typeChangeList = new ArrayList<>();
         var owner = battle.getSide2().getActors().getFirst().getDisplayName().getContents();
-        var opponent = Objects.requireNonNull(battle.getSide2().getActiveClientBattlePokemon().iterator().next().getBattlePokemon()).getDisplayName().getContents();
+        var opponentName = Objects.requireNonNull(battle.getSide2().getActiveClientBattlePokemon().iterator().next().getBattlePokemon()).getDisplayName().getContents();
 
         var ownerName = owner instanceof TranslatableContents
                 ? I18n.get(((TranslatableContents) owner).getKey())
                 : I18n.get(((PlainTextContents) owner).text());
-        var opponentName = opponent instanceof TranslatableContents
-                ? I18n.get(((TranslatableContents) opponent).getKey())
-                : I18n.get(((PlainTextContents) opponent).text());
 
         String[] currentType = new String[0];
         if(battle.getSide2().getActors().getFirst().getType().name().equals("WILD")){

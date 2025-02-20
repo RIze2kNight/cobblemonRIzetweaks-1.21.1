@@ -4,6 +4,8 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.client.gui.pc.PCGUI;
 import com.cobblemon.mod.common.client.gui.pc.StorageWidget;
 import com.cobblemon.mod.common.client.storage.ClientPC;
+import com.rize2knight.CobblemonUITweaksClient;
+import com.rize2knight.GUIHandler;
 import com.rize2knight.HAHighlighterRenderer;
 import com.rize2knight.JumpPCBoxWidget;
 import net.fabricmc.loader.api.FabricLoader;
@@ -27,9 +29,6 @@ import static com.cobblemon.mod.common.client.gui.pc.PCGUI.*;
 
 @Mixin(value = PCGUI.class, priority = 1001)
 public abstract class PCGUIMixin extends Screen {
-
-    @Unique private static final Logger LOGGER = LoggerFactory.getLogger("cobblemonrizetweaks");
-
     @Shadow(remap = false) private StorageWidget storageWidget;
     @Final @Shadow(remap = false) private ClientPC pc;
 
@@ -37,6 +36,7 @@ public abstract class PCGUIMixin extends Screen {
 
     @Shadow(remap = false) private Pokemon previewPokemon = null;
     @Unique private JumpPCBoxWidget jumpPCBoxWidget;        // Add a reference to the JumpPCBoxWidget to manage focus
+    private final Logger LOGGER = CobblemonUITweaksClient.INSTANCE.getLogger();
 
     protected PCGUIMixin(Component component) {
         super(component);
@@ -68,6 +68,8 @@ public abstract class PCGUIMixin extends Screen {
     @Inject(method = "init", at = @At(value = "TAIL"))
     private void cobblemon_ui_tweaks$init(CallbackInfo ci) {
         LOGGER.info("CobblemonRIzeTweaks PCGUIMixin @inject init initialising");
+        //Fix for LastBox feature for cobblemonrizetweaks
+        this.storageWidget.setBox(GUIHandler.INSTANCE.getLastPCBox());
 
         var PCBox = storageWidget.getBox() + 1;
 

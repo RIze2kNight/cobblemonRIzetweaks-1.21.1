@@ -6,6 +6,7 @@
 		"pc.PCGUIMixin",
 		"pc.InfoWidgetMixin",
 		"battle.move.BattleMoveSelectionMixin",
-		"battle.move.MoveHoverRendererMixin"
+		"battle.BattleGUIMixin",
+		"fixes.StorageWidgetMixin"
 	]
 }

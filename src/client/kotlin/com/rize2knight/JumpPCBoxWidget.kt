@@ -19,7 +19,6 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.EditBox
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
-import org.slf4j.LoggerFactory
 
 open class JumpPCBoxWidget(
     private var storageWidget: StorageWidget,
@@ -30,11 +29,9 @@ open class JumpPCBoxWidget(
     Minecraft.getInstance().font,
     x, y, width, height, pcBoxText
 ) {
-    private val logger = LoggerFactory.getLogger("cobblemonrizetweaks")
-
     init {
         this.setFilter { input -> input.isEmpty() || input.all { it.isDigit() } }
-        logger.info("CobblemonRIzeTweaks JumpPCBoxWidget init")
+        CobblemonRizeTweaksClient.LOGGER.info("CobblemonRIzeTweaks JumpPCBoxWidget init")
 
         this.isFocused = false
     }

@@ -15,7 +15,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 object HAHighlighterRenderer {
-    var LOGGER: Logger = LoggerFactory.getLogger("cobblemonrizetweaks")
     private val goldStyle: Style = Style.EMPTY.withColor(TextColor.fromRgb(0xFFD700))
 
     fun renderPC(context: GuiGraphics, x: Int, y: Int, pokemon: Pokemon) {
@@ -35,7 +34,7 @@ object HAHighlighterRenderer {
 
     fun renderSummary(x: Int, y: Int, ROW_HEIGHT: Int, width: Int, pokemon: Pokemon): InfoOneLineWidget? {
         if(hasHiddenAbility(pokemon)) {
-//            LOGGER.info("CobblemonUITweaks highlightSummaryHA")
+//            CobblemonUITweaksClient.logger.info("CobblemonUITweaks highlightSummaryHA")
             val abilityWidget = InfoOneLineWidget(
                 pX = x,
                 pY = y + 5 * ROW_HEIGHT,

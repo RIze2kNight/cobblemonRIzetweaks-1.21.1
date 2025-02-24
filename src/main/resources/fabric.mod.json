@@ -11,24 +11,25 @@
 		"sources": "https://github.com/RIze2kNight/cobblemonuitweaks-1.21.1/tree/official"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/cobblemonuitweaks/icon.png",
+	"icon": "assets/cobblemonrizetweaks/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
 			{
-				"value": "com.rize2knight.CobblemonUITweaks",
+				"value": "com.rize2knight.CobblemonRizeTweaks",
 				"adapter": "kotlin"
 			}
 		],
 		"client": [
 			{
-				"value": "com.rize2knight.CobblemonUITweaksClient",
+				"value": "com.rize2knight.CobblemonRizeTweaksClient",
 				"adapter": "kotlin"
 			}
-		]
+		],
+		"modmenu": [ "com.rize2knight.config.ModMenuIntegration" ]
 	},
 	"mixins": [
-		"cobblemonuitweaks.mixins.json",
+		"cobblemonrizetweaks.mixins.json",
 		{
 			"config": "cobblemonuitweaks.client.mixins.json",
 			"environment": "client"

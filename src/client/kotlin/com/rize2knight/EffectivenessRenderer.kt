@@ -1,61 +1,47 @@
 package com.rize2knight
 
-import ca.landonjw.util.ReflectionUtils
 import com.cobblemon.mod.common.api.gui.blitk
 import com.cobblemon.mod.common.api.moves.MoveTemplate
 import com.cobblemon.mod.common.api.moves.categories.DamageCategories
 import com.cobblemon.mod.common.api.text.bold
+import com.cobblemon.mod.common.api.text.font
 import com.cobblemon.mod.common.api.types.ElementalType
-import com.cobblemon.mod.common.api.types.ElementalTypes
-import com.cobblemon.mod.common.battles.ai.TypeEffectivenessMap
-import com.cobblemon.mod.common.battles.ai.getDamageMultiplier
-import com.cobblemon.mod.common.battles.ai.typeEffectiveness
 import com.cobblemon.mod.common.client.CobblemonClient
 import com.cobblemon.mod.common.client.CobblemonClient.battle
 import com.cobblemon.mod.common.client.CobblemonResources
 import com.cobblemon.mod.common.client.battle.ActiveClientBattlePokemon
-import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.COMPACT_INFO_OFFSET_X
-import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.COMPACT_PORTRAIT_DIAMETER
-import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.COMPACT_PORTRAIT_OFFSET_X
-import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.COMPACT_PORTRAIT_OFFSET_Y
 import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.COMPACT_TILE_HEIGHT
-import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.COMPACT_TILE_TEXTURE_HEIGHT
 import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.COMPACT_TILE_WIDTH
 import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.COMPACT_VERTICAL_SPACING
-import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.INFO_OFFSET_X
-import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.PORTRAIT_DIAMETER
-import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.PORTRAIT_OFFSET_X
-import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.PORTRAIT_OFFSET_Y
-import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.SCALE
 import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.TILE_HEIGHT
 import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.TILE_WIDTH
 import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.VERTICAL_INSET
 import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.VERTICAL_SPACING
-import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.battleInfoBase
-import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.battleInfoBaseCompact
-import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.battleInfoBaseFlipped
-import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.battleInfoBaseFlippedCompact
 import com.cobblemon.mod.common.client.gui.battle.subscreen.BattleMoveSelection
 import com.cobblemon.mod.common.client.render.drawScaledText
-import com.cobblemon.mod.relocations.oracle.truffle.api.dsl.TypeCheck
+import com.rize2knight.config.ModConfig
+import com.rize2knight.util.ReflectionUtils
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.resources.language.I18n
 import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.contents.PlainTextContents
 import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.resources.ResourceLocation
 
 object EffectivenessRenderer {
-//    val leftGreen = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/move/header/left.png")
-//    val rightGreen = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/move/header/middle.png")
-    val leftNeutral = ResourceLocation.tryBuild(CobblemonUITweaksClient.MODID, "textures/battle/effectiveness/battle_effective.png")
-    val rightNeutral = ResourceLocation.tryBuild(CobblemonUITweaksClient.MODID, "textures/battle/effectiveness/battle_effective_flipped.png")
-//    val leftYellow = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/move/header/left.png")
-//    val rightYellow = ResourceLocation.tryBuild(CobblemonUITweaks.MODID, "textures/battle/move/header/middle.png")
-    val leftNeutralComp = ResourceLocation.tryBuild(CobblemonUITweaksClient.MODID, "textures/battle/effectiveness/battle_effective_compact.png")
-    val rightNeutralComp = ResourceLocation.tryBuild(CobblemonUITweaksClient.MODID, "textures/battle/effectiveness/battle_effective_flipped_compact.png")
+    private val singleTarget = ResourceLocation.tryBuild(CobblemonRizeTweaksClient.MODID, "textures/battle/effectiveness/range_single.png")
+    private val multiTarget = ResourceLocation.tryBuild(CobblemonRizeTweaksClient.MODID, "textures/battle/effectiveness/range_multi.png")
+    private val leftNeutral = ResourceLocation.tryBuild(CobblemonRizeTweaksClient.MODID, "textures/battle/effectiveness/battle_effective.png")
+    private val rightNeutral = ResourceLocation.tryBuild(CobblemonRizeTweaksClient.MODID, "textures/battle/effectiveness/battle_effective_flipped.png")
+    private val leftGreen = ResourceLocation.tryBuild(CobblemonRizeTweaksClient.MODID, "textures/battle/effectiveness/battle_green.png")
+    private val rightGreen = ResourceLocation.tryBuild(CobblemonRizeTweaksClient.MODID, "textures/battle/effectiveness/battle_green_flipped.png")
+    private val leftYellow = ResourceLocation.tryBuild(CobblemonRizeTweaksClient.MODID, "textures/battle/effectiveness/battle_yellow.png")
+    private val rightYellow = ResourceLocation.tryBuild(CobblemonRizeTweaksClient.MODID, "textures/battle/effectiveness/battle_yellow_flipped.png")
+    private val leftRed = ResourceLocation.tryBuild(CobblemonRizeTweaksClient.MODID, "textures/battle/effectiveness/battle_red.png")
+    private val rightRed = ResourceLocation.tryBuild(CobblemonRizeTweaksClient.MODID, "textures/battle/effectiveness/battle_red_flipped.png")
+
+
     private val playerUUID = Minecraft.getInstance().player?.uuid
     private var playerPokemon : ActiveClientBattlePokemon? = null
     private var typeChangesList : Map<String,MutableList<ElementalType>>? = null
@@ -89,78 +75,93 @@ object EffectivenessRenderer {
         if (activeBattlePokemon.animations.peek() !== null ||
             playerPokemon == null) return
         val move = moveTile?.move ?: return
+        val isPlayer = activeBattlePokemon.getPNX() == playerPokemon!!.getPNX()
 
         val selectableTargetList = move.target.targetList(playerPokemon!!)
         val multiTargetList = if(selectableTargetList == null) playerPokemon!!.getMultiTargetList(move.target) else null
         val isTarget = selectableTargetList?.firstOrNull { it.getPNX() == activeBattlePokemon.getPNX() }?.getPNX()
-        val isMultiTarget = multiTargetList?.any { it.getPNX() == activeBattlePokemon.getPNX() }
+//        val isMultiTarget = multiTargetList?.any { it.getPNX() == activeBattlePokemon.getPNX() }
 
-        if(isTarget != null || isMultiTarget == true){
+
+        if((isTarget != null || multiTargetList != null || isPlayer) && moveTile!!.moveTemplate.damageCategory != DamageCategories.STATUS) {
             val playerNumberOffset = (activeBattlePokemon.getActorShowdownId()[1].digitToInt() - 1) / 2 * 10
             val isCompact = battle?.battleFormat?.battleType?.pokemonPerSide!! > 1
 
             val tileWidth = if(isCompact) COMPACT_TILE_WIDTH else TILE_WIDTH
             val tileHeight = if(isCompact) COMPACT_TILE_HEIGHT else TILE_HEIGHT
             val verticalSpacing = if(isCompact) COMPACT_VERTICAL_SPACING else VERTICAL_SPACING
-            val portraitDiameter = if (isCompact) COMPACT_PORTRAIT_DIAMETER else PORTRAIT_DIAMETER
-            val portraitOffsetX = if (isCompact) COMPACT_PORTRAIT_OFFSET_X else PORTRAIT_OFFSET_X
-            val portraitOffsetY = if (isCompact) COMPACT_PORTRAIT_OFFSET_Y else PORTRAIT_OFFSET_Y
-            val infoOffsetX = if (isCompact) COMPACT_INFO_OFFSET_X else INFO_OFFSET_X
-            val offset = if(isCompact) 30 else 40
+            val textureWidth = TILE_WIDTH + 26
 
             val x = activeBattlePokemon.xDisplacement
             val y = VERTICAL_INSET + rank * verticalSpacing + (if (left) playerNumberOffset else (battle!!.battleFormat.battleType.actorsPerSide - 1) * 10 - playerNumberOffset)
 
-            val x0 = x + if (left) tileWidth  else 0
-            val y0 = y + portraitOffsetY
-
-            val effectivenessText = getMoveEffectiveness(moveTile!!.moveTemplate, activeBattlePokemon)
+            val x0 = x + if (left) tileWidth  else -1
+            val dmgMultiplier = getMoveEffectiveness(moveTile!!.moveTemplate, activeBattlePokemon)
+            val effectivenessText = Component.literal("x$dmgMultiplier")
             val matrixStack = context.pose()
+
+            val leftTexture = when {
+                dmgMultiplier!! > 1f -> leftGreen
+                dmgMultiplier > 0f && dmgMultiplier < 1f -> leftYellow
+                dmgMultiplier == 0f -> leftRed
+                else -> leftNeutral
+            }
+            val rightTexture = when {
+                dmgMultiplier > 1f -> rightGreen
+                dmgMultiplier > 0f && dmgMultiplier < 1f -> rightYellow
+                dmgMultiplier == 0f -> rightRed
+                else -> rightNeutral
+            }
 
             blitk(
                 matrixStack = matrixStack,
-                texture = if (isCompact) (if (left) leftNeutralComp else rightNeutralComp) else (if (left) leftNeutral else rightNeutral),
-                x = x - if(left) 0 else ((PORTRAIT_DIAMETER / 2) + PORTRAIT_OFFSET_X + 1),
+                texture = if(isPlayer) (if(multiTargetList != null) multiTarget else singleTarget)
+                            else (if (left) leftTexture else rightTexture),
+                x = x - if(left) 0 else if(isCompact) 28 else 26,
                 y = y,
                 height = tileHeight,
-                width = tileWidth + (PORTRAIT_DIAMETER / 2) + PORTRAIT_OFFSET_X + 1,
-                textureHeight = if (isCompact) COMPACT_TILE_TEXTURE_HEIGHT else TILE_HEIGHT,
+                width = textureWidth,
+                textureHeight = TILE_HEIGHT + COMPACT_TILE_HEIGHT,
+                vOffset = if (isCompact) TILE_HEIGHT else 0,
+                uOffset = if (!left) if(isCompact) 10 else 0 else 0
             )
-            if (effectivenessText != null) {
+            if (effectivenessText != null && !isPlayer) {
+                val textRenderer = Minecraft.getInstance().font
+                val textOffset = textRenderer.width(effectivenessText.font(CobblemonResources.DEFAULT_LARGE).bold()) / 2
+                val centeredOffsetX = if(isCompact) 12 else 21/2
+
                 drawScaledText(
                     context = context,
                     font = CobblemonResources.DEFAULT_LARGE,
                     text = effectivenessText.bold(),
-                    x = if(left) x0 + (if(isCompact) 0 else 3) else x - 14,
-                    y = y0,
+                    x = x0 + if(left) centeredOffsetX - textOffset else -(centeredOffsetX + textOffset),
+                    y = y + if (isCompact) 6 else 8,
                     shadow = true
                 )
             }
         }
     }
 
-    private fun getMoveEffectiveness(move: MoveTemplate, activeBattlePokemon: ActiveClientBattlePokemon): MutableComponent? {
+    private fun getMoveEffectiveness(move: MoveTemplate, activeBattlePokemon: ActiveClientBattlePokemon): Float? {
         val opponent = activeBattlePokemon.battlePokemon ?: return null
         val aspects: Set<String> = ReflectionUtils.getPrivateField(opponent, "aspects") ?: return null
 
         val opponentForm = opponent.species.getForm(aspects)
-        if (move.damageCategory == DamageCategories.STATUS) return null
 
         val typeChangeList = getTypeChanges(activeBattlePokemon)
         var primaryType: ElementalType? = opponentForm.primaryType
         var secondaryType: ElementalType? = opponentForm.secondaryType
 
-        if (typeChangeList != null) {
+        if (typeChangeList != null && ModConfig.getInstance().isEnabled("type_changes")) {
             if (typeChangeList.isNotEmpty()) {
                 primaryType = typeChangeList.getOrNull(0) ?: primaryType // Use the first element if available, otherwise keep the original type
-                secondaryType = typeChangeList.getOrNull(1) // Use the second element if available, otherwise keep the original type
+                secondaryType = typeChangeList.getOrNull(1) ?: secondaryType // Use the second element if available, otherwise keep the original type
             }
         }
 
-        val primaryDmg : Double = primaryType?.let { getDamageMultiplier(move.elementalType, it) }!!
-        val secondaryDmg : Double = secondaryType?.let { getDamageMultiplier(move.elementalType, it) } ?: 1.0
+        val damageMultiplier : Float = MoveEffectivenessCalculator.getMoveDamageMult(move, primaryType, secondaryType)
 
-        return Component.literal("x" + (primaryDmg * secondaryDmg))
+        return damageMultiplier
     }
 
     private fun getTypeChanges(opponent: ActiveClientBattlePokemon): List<ElementalType>? {

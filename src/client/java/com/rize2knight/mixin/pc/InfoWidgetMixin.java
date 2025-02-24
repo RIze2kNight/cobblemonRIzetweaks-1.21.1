@@ -4,6 +4,7 @@ import com.cobblemon.mod.common.client.gui.summary.widgets.SoundlessWidget;
 import com.cobblemon.mod.common.client.gui.summary.widgets.screens.info.InfoWidget;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.rize2knight.HAHighlighterRenderer;
+import com.rize2knight.config.ModConfig;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +31,7 @@ public abstract class InfoWidgetMixin extends SoundlessWidget {
         )
     )
     protected void renderWidget(GuiGraphics context, int pMouseX, int pMouseY, float pPartialTicks, CallbackInfo ci) {
-        if(pokemon != null){
+        if(pokemon != null && ModConfig.getInstance().isEnabled("hidden_ability_highlighter")){
             var abilityWidget = HAHighlighterRenderer.INSTANCE.renderSummary(this.getX(),this.getY(), ROW_HEIGHT,this.width,pokemon);
             if(abilityWidget != null){
                 abilityWidget.render(context, pMouseX, pMouseY, pPartialTicks);

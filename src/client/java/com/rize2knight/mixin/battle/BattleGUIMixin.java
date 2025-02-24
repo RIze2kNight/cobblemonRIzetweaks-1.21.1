@@ -1,12 +1,12 @@
 package com.rize2knight.mixin.battle;
 
-import ca.landonjw.BattlePortraitHoverRenderer;
-import ca.landonjw.ResizeableTextQueue;
+import com.cobblemon.mod.common.api.Priority;
 import com.cobblemon.mod.common.api.types.ElementalType;
 import com.cobblemon.mod.common.api.types.ElementalTypes;
-import com.cobblemon.mod.common.client.CobblemonClient;
 import com.cobblemon.mod.common.client.gui.battle.BattleGUI;
 import com.rize2knight.EffectivenessRenderer;
+import com.rize2knight.config.ModConfig;
+import com.rize2knight.util.BattleMessageQueue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.MutableComponent;
@@ -19,6 +19,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
 
+import static com.cobblemon.mod.common.api.events.CobblemonEvents.*;
+
 @Mixin(BattleGUI.class)
 public class BattleGUIMixin {
     @Unique
@@ -27,17 +29,22 @@ public class BattleGUIMixin {
 
     @Inject(method = "render", at = @At("TAIL"))
     private void render(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        ensureSubscribed();
-
-        EffectivenessRenderer.INSTANCE.render(context, mouseX, mouseY, battleTypeChanges);
+        if(ModConfig.getInstance().isEnabled("move_tips")) {
+            ensureSubscribed();
+            EffectivenessRenderer.INSTANCE.render(context, mouseX, mouseY, battleTypeChanges);
+        }
     }
 
+    @Unique
     private void ensureSubscribed() {
         if (!isSubscribed) {
             isSubscribed = true;
-            ResizeableTextQueue queueWithBattleMessages = (ResizeableTextQueue) (Object) CobblemonClient.INSTANCE.getBattle().getMessages();
-            queueWithBattleMessages.cobblemon_ui_tweaks$subscribe(message -> {
 
+            // Clears BattleMessageQueue when battle ends
+            BattleMessageQueue battleMessageQueue = BattleMessageQueue.INSTANCE;
+            BATTLE_STARTED_PRE.subscribe(Priority.NORMAL, battleStartedPreEvent -> {battleMessageQueue.clearBattleMessages(); return null;});
+
+            BattleMessageQueue.subscribe(message -> {
                 if(message.getContents() instanceof TranslatableContents contents){
                     Object[] args = contents.getArgs();
                     if(args.length >= 2) {
@@ -52,7 +59,6 @@ public class BattleGUIMixin {
                             // Extract owner and Pokémon name from the first argument
                             if (args[0] instanceof MutableComponent PokemonComponent
                                     && PokemonComponent.getContents() instanceof TranslatableContents PokemonContents) {
-
                                 if ("cobblemon.battle.owned_pokemon".equals(PokemonContents.getKey())) {
                                     Object[] pokeArgs = PokemonContents.getArgs();
                                     owner = pokeArgs[0].toString(); // Owner name
@@ -71,6 +77,7 @@ public class BattleGUIMixin {
                         }
                     }
                 }
+                return null;
             });
         }
     }

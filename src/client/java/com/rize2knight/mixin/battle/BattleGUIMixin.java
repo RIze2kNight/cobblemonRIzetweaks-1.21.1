@@ -69,7 +69,7 @@ public class BattleGUIMixin {
                                 }
                             }
 
-                            if (owner != null && pokemonName != null && !Objects.equals(owner, Minecraft.getInstance().getUser().getName())) {
+                            if (owner != null && pokemonName != null) {
                                 // Create a unique key based on owner and Pokémon name
                                 String key = owner + ":" + pokemonName;
                                 battleTypeChanges.put(key, newTypes); // Update or add the new type

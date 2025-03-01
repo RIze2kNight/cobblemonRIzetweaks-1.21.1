@@ -1,11 +1,11 @@
 package com.rize2knight.mixin.pc;
 
+import ca.landonjw.GUIHandler;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.client.gui.pc.PCGUI;
 import com.cobblemon.mod.common.client.gui.pc.StorageWidget;
 import com.cobblemon.mod.common.client.storage.ClientPC;
 import com.rize2knight.CobblemonRizeTweaksClient;
-import com.rize2knight.GUIHandler;
 import com.rize2knight.HAHighlighterRenderer;
 import com.rize2knight.JumpPCBoxWidget;
 import com.rize2knight.config.ModConfig;
@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static com.cobblemon.mod.common.client.gui.pc.PCGUI.*;
 
@@ -69,11 +70,6 @@ public abstract class PCGUIMixin extends Screen {
     @Inject(method = "init", at = @At(value = "TAIL"))
     private void cobblemon_rize_tweaks$init(CallbackInfo ci) {
         LOGGER.info("CobblemonRIzeTweaks PCGUIMixin @inject init initialising");
-
-        //Fix for LastBox feature for cobblemonrizetweaks
-        if(ModConfig.getInstance().isEnabled("cobblemonuitweaks_pc_scroll_fix")) {
-            this.storageWidget.setBox(GUIHandler.INSTANCE.getLastPCBox());
-        }
 
         if(ModConfig.getInstance().isEnabled("pc_box_jump")) {
             var PCBox = storageWidget.getBox() + 1;
@@ -123,5 +119,17 @@ public abstract class PCGUIMixin extends Screen {
             HAHighlighterRenderer.INSTANCE.renderPC(context,x,y,pokemon);
         }
         super.render(context, mouseX, mouseY, delta);
+    }
+
+    @ModifyVariable(
+            method = "<init>(Lcom/cobblemon/mod/common/client/storage/ClientPC;Lcom/cobblemon/mod/common/client/storage/ClientParty;Lcom/cobblemon/mod/common/client/gui/pc/PCGUIConfiguration;I)V",
+            at = @At("HEAD"), // Modify the variable as soon as the constructor starts
+            index = 4,        // The 5th parameter (0-based: this, 1st, 2nd, 3rd, 4th)
+            name = "openOnBox",
+            argsOnly = true,
+            remap = false
+    )
+    private static int fixOpenOnBox(int value) {
+        return value == 0 ? GUIHandler.INSTANCE.getLastPCBox() : value;
     }
 }

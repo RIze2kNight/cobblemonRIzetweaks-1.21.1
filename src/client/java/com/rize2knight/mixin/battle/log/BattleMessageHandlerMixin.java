@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(BattleMessageHandler.class)
+@Mixin(value = BattleMessageHandler.class, priority = 1001)
 public abstract class BattleMessageHandlerMixin implements ClientNetworkPacketHandler<BattleMessagePacket> {
 
     @Inject(method = "handle*", at = @At("TAIL"))

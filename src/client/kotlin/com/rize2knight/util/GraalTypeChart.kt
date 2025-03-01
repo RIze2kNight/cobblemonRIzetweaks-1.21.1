@@ -11,11 +11,9 @@ import java.io.File
 import java.nio.file.Paths
 
 class GraalTypeChart{
-    @kotlin.jvm.Transient
-    lateinit var context: Context
-    @kotlin.jvm.Transient
+    @Transient lateinit var context: Context
+    @Transient val unbundler = GraalShowdownUnbundler()
 
-    val unbundler = GraalShowdownUnbundler()
     private val filePaths = listOf(
         "showdown/data/typechart.js",
         "showdown/data/mods/cobblemon/typechart.js"

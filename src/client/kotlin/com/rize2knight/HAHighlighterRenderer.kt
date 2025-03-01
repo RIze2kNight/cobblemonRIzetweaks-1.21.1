@@ -11,8 +11,6 @@ import com.cobblemon.mod.common.util.lang
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Style
 import net.minecraft.network.chat.TextColor
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 object HAHighlighterRenderer {
     private val goldStyle: Style = Style.EMPTY.withColor(TextColor.fromRgb(0xFFD700))

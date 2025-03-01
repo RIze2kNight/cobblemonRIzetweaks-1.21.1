@@ -6,7 +6,6 @@
     "battle.BattleGUIMixin",
     "battle.log.BattleMessageHandlerMixin",
     "battle.move.BattleMoveSelectionMixin",
-    "fixes.StorageWidgetMixin",
     "pc.InfoWidgetMixin",
     "pc.PCGUIMixin"
   ]

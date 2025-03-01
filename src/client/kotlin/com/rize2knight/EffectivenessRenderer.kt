@@ -155,7 +155,7 @@ object EffectivenessRenderer {
         if (typeChangeList != null && ModConfig.getInstance().isEnabled("type_changes")) {
             if (typeChangeList.isNotEmpty()) {
                 primaryType = typeChangeList.getOrNull(0) ?: primaryType // Use the first element if available, otherwise keep the original type
-                secondaryType = typeChangeList.getOrNull(1) ?: secondaryType // Use the second element if available, otherwise keep the original type
+                secondaryType = typeChangeList.getOrNull(1) // Use the second element if available, otherwise NULL mainly cuz of Soak type moves
             }
         }
 

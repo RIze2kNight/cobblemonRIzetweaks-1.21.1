@@ -9,7 +9,6 @@ import com.rize2knight.CobblemonRizeTweaksClient;
 import com.rize2knight.HAHighlighterRenderer;
 import com.rize2knight.JumpPCBoxWidget;
 import com.rize2knight.config.ModConfig;
-import dev.architectury.platform.Mod;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -130,7 +129,9 @@ public abstract class PCGUIMixin extends Screen {
             remap = false
     )
     private static int fixOpenOnBox(int value) {
-        if(ModConfig.getInstance().isEnabled("cobblemonuitweaks_last_pc_box_fix")) { return value; }
-        return value == 0 ? GUIHandler.INSTANCE.getLastPCBox() : value;
+        if(ModConfig.getInstance().isEnabled("cobblemonuitweaks_last_pc_box_fix")) {
+            return value == 0 ? GUIHandler.INSTANCE.getLastPCBox() : value;
+        }
+        return value;
     }
 }

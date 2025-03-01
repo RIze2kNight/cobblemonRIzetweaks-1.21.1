@@ -7,7 +7,6 @@ import com.cobblemon.mod.common.client.gui.battle.BattleGUI;
 import com.rize2knight.EffectivenessRenderer;
 import com.rize2knight.config.ModConfig;
 import com.rize2knight.util.BattleMessageQueue;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;

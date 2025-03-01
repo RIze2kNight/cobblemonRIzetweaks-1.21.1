@@ -130,6 +130,7 @@ public abstract class PCGUIMixin extends Screen {
             remap = false
     )
     private static int fixOpenOnBox(int value) {
+        if(ModConfig.getInstance().isEnabled("cobblemonuitweaks_last_pc_box_fix")) { return value; }
         return value == 0 ? GUIHandler.INSTANCE.getLastPCBox() : value;
     }
 }

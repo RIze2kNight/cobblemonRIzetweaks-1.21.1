@@ -69,8 +69,9 @@ dependencies {
 	modImplementation(files("/deps/cobblemon-trainer-battle-1.9.9+1.6.1.jar"))
 	modImplementation(files("/deps/modmenu-11.0.3.jar"))
 
-//	modImplementation("com.terraformersmc:modmenu:11.0.0-beta.1")
  	modImplementation(files("/deps/MoreCobblemonTweaks/MoreCobblemonTweaks-fabric-1.0.2.jar"))
+//	modImplementation(files("/deps/cobblemonuitweaks/cobblemon-ui-tweaks-1.0.7.jar"))
+//	modImplementation("com.terraformersmc:modmenu:11.0.0-beta.1")
 }
 
 processResources {

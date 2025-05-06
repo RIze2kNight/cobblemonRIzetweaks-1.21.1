@@ -2,6 +2,7 @@ package com.rize2knight.config;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
+import me.shedaniel.autoconfig.AutoConfig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
@@ -10,9 +11,6 @@ import net.fabricmc.loader.api.FabricLoader;
 public class ModMenuIntegration implements ModMenuApi{
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        if (!FabricLoader.getInstance().isModLoaded("cloth-config2")) {
-            return screen -> null;
-        }
-        return ConfigScreen::buildScreen;
+        return parent -> AutoConfig.getConfigScreen(ModConfig.class, parent).get();
     }
 }

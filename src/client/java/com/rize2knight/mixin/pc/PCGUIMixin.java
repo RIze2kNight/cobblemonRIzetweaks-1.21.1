@@ -1,6 +1,5 @@
 package com.rize2knight.mixin.pc;
 
-import ca.landonjw.GUIHandler;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.client.gui.pc.PCGUI;
 import com.cobblemon.mod.common.client.gui.pc.StorageWidget;
@@ -30,13 +29,14 @@ import static com.cobblemon.mod.common.client.gui.pc.PCGUI.*;
 
 @Mixin(value = PCGUI.class, priority = 1001)
 public abstract class PCGUIMixin extends Screen {
+    @Unique private static ModConfig config = CobblemonRizeTweaksClient.INSTANCE.getConfig();
     @Shadow(remap = false) private StorageWidget storageWidget;
     @Final @Shadow(remap = false) private ClientPC pc;
     @Shadow public abstract void render(@NotNull GuiGraphics context, int mouseX, int mouseY, float delta);
     @Shadow(remap = false) private Pokemon previewPokemon = null;
 
     @Unique private JumpPCBoxWidget jumpPCBoxWidget;        // Add a reference to the JumpPCBoxWidget to manage focus
-    @Unique private final Logger LOGGER = CobblemonRizeTweaksClient.INSTANCE.getLOGGER();
+    @Unique private static final Logger LOGGER = CobblemonRizeTweaksClient.INSTANCE.getLOGGER();
 
     protected PCGUIMixin(Component component) {
         super(component);
@@ -46,7 +46,7 @@ public abstract class PCGUIMixin extends Screen {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         if (FabricLoader.getInstance().isModLoaded("cobblemon-ui-tweaks")
-            && ModConfig.getInstance().isEnabled("cobblemonuitweaks_pc_scroll_fix")){
+            && config.uiTweaks_pcScrollFix){
             var pastureWidget = storageWidget.getPastureWidget();
             if (pastureWidget != null && pastureWidget.getPastureScrollList().isMouseOver(mouseX, mouseY)) {
                 pastureWidget.getPastureScrollList().mouseScrolled(mouseX, mouseY, horizontalAmount,verticalAmount);
@@ -58,7 +58,7 @@ public abstract class PCGUIMixin extends Screen {
         }
 
         // If JumpPCBoxWidget is set, unfocus the EditBox to prevent de-synced box numbers
-        if(jumpPCBoxWidget != null && ModConfig.getInstance().isEnabled("pc_box_jump")) {
+        if(jumpPCBoxWidget != null && config.pcBoxJump) {
             jumpPCBoxWidget.setFocused(false);
         }
 
@@ -70,7 +70,7 @@ public abstract class PCGUIMixin extends Screen {
     private void cobblemon_rize_tweaks$init(CallbackInfo ci) {
         LOGGER.info("CobblemonRIzeTweaks PCGUIMixin @inject init initialising");
 
-        if(ModConfig.getInstance().isEnabled("pc_box_jump")) {
+        if(config.pcBoxJump) {
             var PCBox = storageWidget.getBox() + 1;
             jumpPCBoxWidget = new JumpPCBoxWidget(
                     this.storageWidget,
@@ -96,7 +96,7 @@ public abstract class PCGUIMixin extends Screen {
             index = 2
     )
     private MutableComponent modifyPCBoxLabelLogic(MutableComponent originalText) {
-        if(ModConfig.getInstance().isEnabled("pc_box_jump")) {
+        if(config.pcBoxJump) {
             if (jumpPCBoxWidget.isFocused()) {
                 return Component.empty();
             }
@@ -114,7 +114,7 @@ public abstract class PCGUIMixin extends Screen {
         var x = (width - BASE_WIDTH) / 2;
         var y = (height - BASE_HEIGHT) / 2;
 
-        if (pokemon != null && ModConfig.getInstance().isEnabled("hidden_ability_highlighter")){
+        if (pokemon != null && config.HAHightlighter){
             HAHighlighterRenderer.INSTANCE.renderPC(context,x,y,pokemon);
         }
         super.render(context, mouseX, mouseY, delta);
@@ -129,8 +129,13 @@ public abstract class PCGUIMixin extends Screen {
             remap = false
     )
     private static int fixOpenOnBox(int value) {
-        if(ModConfig.getInstance().isEnabled("cobblemonuitweaks_last_pc_box_fix")) {
-            return value == 0 ? GUIHandler.INSTANCE.getLastPCBox() : value;
+        if(FabricLoader.getInstance().isModLoaded("cobblemon-ui-tweaks") && config.uiTweaks_lastPCBoxFix) {
+            try{
+                Class<?> guiHandlerClass = Class.forName("ca.landonjw.GUIHandler");
+                Object instance = guiHandlerClass.getField("INSTANCE").get(null);
+                return (int) guiHandlerClass.getMethod("getLastPCBox").invoke(instance);
+            }
+            catch (Exception e) { LOGGER.info(e.toString()); }
         }
         return value;
     }

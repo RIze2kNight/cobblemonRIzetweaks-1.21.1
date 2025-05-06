@@ -31,7 +31,7 @@
 	"mixins": [
 		"cobblemonrizetweaks.mixins.json",
 		{
-			"config": "cobblemonuitweaks.client.mixins.json",
+			"config": "cobblemonrizetweaks.client.mixins.json",
 			"environment": "client"
 		}
 	],

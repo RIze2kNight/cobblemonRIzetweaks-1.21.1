@@ -1,12 +1,17 @@
 {
   "required": false,
   "package": "com.rize2knight.mixin",
+  "plugin": "com.rize2knight.mixin.RIzeTweaksMixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "battle.BattleGUIMixin",
     "battle.log.BattleMessageHandlerMixin",
     "battle.move.BattleMoveSelectionMixin",
     "pc.InfoWidgetMixin",
-    "pc.PCGUIMixin"
-  ]
+    "pc.PCGUIMixin",
+    "UITweaks.MoveHoverRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

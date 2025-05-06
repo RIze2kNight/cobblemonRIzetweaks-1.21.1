@@ -12,14 +12,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(value = BattleMessageHandler.class, priority = 1001)
+@Mixin(value = BattleMessageHandler.class)
 public abstract class BattleMessageHandlerMixin implements ClientNetworkPacketHandler<BattleMessagePacket> {
 
     @Inject(method = "handle*", at = @At("TAIL"))
-    public void cobblemon_ui_tweaks$handle(@NotNull NetworkPacket packet, @NotNull Minecraft client, CallbackInfo ci) {
-        if (packet instanceof BattleMessagePacket battleMessagePacket) {
-            BattleMessageQueue.add(battleMessagePacket.getMessages());
-        }
+    public void cobblemon_ui_tweaks$handle(@NotNull BattleMessagePacket packet, @NotNull Minecraft client, CallbackInfo ci) {
+        BattleMessageQueue.add(packet.getMessages());
     }
 
 }

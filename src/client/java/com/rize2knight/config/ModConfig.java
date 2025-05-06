@@ -1,84 +1,35 @@
 package com.rize2knight.config;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.rize2knight.CobblemonRizeTweaksClient;
-import org.slf4j.Logger;
+import me.shedaniel.autoconfig.ConfigData;
+import me.shedaniel.autoconfig.annotation.Config;
+import me.shedaniel.autoconfig.annotation.ConfigEntry;
+import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 
-import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+@Config(name = CobblemonRizeTweaksClient.MODID)
+public class ModConfig implements ConfigData {
+    @ConfigEntry.Category("RIzeTweaks")
+    public boolean pcBoxJump = true;
 
-public class ModConfig {
-    private static final Logger LOGGER = CobblemonRizeTweaksClient.INSTANCE.getLOGGER();
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final File CONFIG_FILE = new File("config/" + CobblemonRizeTweaksClient.MODID + ".json");
+    @ConfigEntry.Category("RIzeTweaks")
+    public boolean HAHightlighter = true;
 
-    // Use a Map to store dynamic configuration options
-    private Map<String, Boolean> configOptions = new HashMap<>();
+    @ConfigEntry.Category("RIzeTweaks")
+    public boolean typeChanges = true;
 
-    private static ModConfig instance;
+    @ConfigEntry.Category("RIzeTweaks") @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+    @Comment("""
+                ALL: Renders both CobblemonUITweaks and RIzeTweaks Move Helpers.
+                RIzeTweaks: Only renders RIzeTweaks Move Helper.
+                RIzeMultiBattle: Only renders RIzeTweaks Move Helper during multi-battles.
+                CobblemonUITweaks: Only renders CobblemonUITweaks Move Helper.
+                DISABLE: Disable all Move Helpers.
+                """)
+    public BattleGUIRendererStyle battleGUIStyle = BattleGUIRendererStyle.ALL;
 
-    public ModConfig() {
-        // Initialize default values
-        configOptions.put("pc_box_jump", true);
-        configOptions.put("hidden_ability_highlighter", true);
-        configOptions.put("move_tips", true);
-        configOptions.put("type_changes", true);
-        configOptions.put("cobblemonuitweaks_pc_scroll_fix", true);
-        configOptions.put("cobblemonuitweaks_last_pc_box_fix", true);
-    }
+    @ConfigEntry.Category("Fixes")
+    public boolean uiTweaks_pcScrollFix = true;
 
-    public static ModConfig getInstance() {
-        if (instance == null) {
-            loadConfig();
-        }
-        return instance;
-    }
-
-    public static void loadConfig() {
-        if (!CONFIG_FILE.exists()) {
-            instance = new ModConfig();
-            saveConfig();
-            return;
-        }
-
-        try (final FileReader reader = new FileReader(CONFIG_FILE)) {
-            instance = GSON.fromJson(reader, ModConfig.class);
-        } catch (IOException e) {
-            LOGGER.warn("Failed to load config file!");
-            LOGGER.warn(e.getMessage());
-            instance = new ModConfig();
-        }
-    }
-
-    public static void saveConfig() {
-        try (final FileWriter writer = new FileWriter(CONFIG_FILE)) {
-            GSON.toJson(instance, writer);
-        } catch (IOException e) {
-            LOGGER.warn("Failed to save config file!");
-            LOGGER.warn(e.getMessage());
-        }
-    }
-
-    // Method to get a configuration value by key
-    public boolean isEnabled(String key) {
-        return configOptions.getOrDefault(key, true); // Default to true if key doesn't exist
-    }
-
-    // Method to set a configuration value by key
-    public void setEnabled(String key, boolean value) {
-        configOptions.put(key, value);
-        saveConfig(); // Save the config whenever a value is updated
-    }
-
-    // Getter for configOptions (used by Gson for serialization)
-    public Map<String, Boolean> getConfigOptions() {
-        return configOptions;
-    }
-
-    // Setter for configOptions (used by Gson for deserialization)
-    public void setConfigOptions(Map<String, Boolean> configOptions) {
-        this.configOptions = configOptions;
-    }
+    @ConfigEntry.Category("Fixes")
+    public boolean uiTweaks_lastPCBoxFix = true;
 }

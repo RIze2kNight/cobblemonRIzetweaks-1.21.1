@@ -6,6 +6,7 @@ import com.cobblemon.mod.common.api.moves.categories.DamageCategories
 import com.cobblemon.mod.common.api.text.bold
 import com.cobblemon.mod.common.api.text.font
 import com.cobblemon.mod.common.api.types.ElementalType
+import com.cobblemon.mod.common.battles.BattleFormat
 import com.cobblemon.mod.common.client.CobblemonClient
 import com.cobblemon.mod.common.client.CobblemonClient.battle
 import com.cobblemon.mod.common.client.CobblemonResources
@@ -19,8 +20,9 @@ import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.VERTIC
 import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.VERTICAL_SPACING
 import com.cobblemon.mod.common.client.gui.battle.subscreen.BattleMoveSelection
 import com.cobblemon.mod.common.client.render.drawScaledText
-import com.rize2knight.config.ModConfig
+import com.rize2knight.config.BattleGUIRendererStyle
 import com.rize2knight.util.ReflectionUtils
+import com.rize2knight.util.UITweaksEffectiveness
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.resources.language.I18n
@@ -41,7 +43,7 @@ object EffectivenessRenderer {
     private val leftRed = ResourceLocation.tryBuild(CobblemonRizeTweaksClient.MODID, "textures/battle/effectiveness/battle_red.png")
     private val rightRed = ResourceLocation.tryBuild(CobblemonRizeTweaksClient.MODID, "textures/battle/effectiveness/battle_red_flipped.png")
 
-
+    private val config = CobblemonRizeTweaksClient.config
     private val playerUUID = Minecraft.getInstance().player?.uuid
     private var playerPokemon : ActiveClientBattlePokemon? = null
     private var typeChangesList : Map<String,MutableList<ElementalType>>? = null
@@ -113,28 +115,33 @@ object EffectivenessRenderer {
                 else -> rightNeutral
             }
 
+            UITweaksEffectiveness.set(dmgMultiplier)
+
+            if(config!!.battleGUIStyle == BattleGUIRendererStyle.CobblemonUITweaks || config.battleGUIStyle == BattleGUIRendererStyle.DISABLE) return
+            if(config.battleGUIStyle == BattleGUIRendererStyle.RIzeMultiBattle && battle!!.battleFormat.battleType.name.equals(BattleFormat.GEN_9_SINGLES.battleType.name)) return
             blitk(
                 matrixStack = matrixStack,
-                texture = if(isPlayer) (if(multiTargetList != null) multiTarget else singleTarget)
-                            else (if (left) leftTexture else rightTexture),
-                x = x - if(left) 0 else if(isCompact) 28 else 26,
+                texture = if (isPlayer) (if (multiTargetList != null) multiTarget else singleTarget)
+                else (if (left) leftTexture else rightTexture),
+                x = x - if (left) 0 else if (isCompact) 28 else 26,
                 y = y,
                 height = tileHeight,
                 width = textureWidth,
                 textureHeight = TILE_HEIGHT + COMPACT_TILE_HEIGHT,
                 vOffset = if (isCompact) TILE_HEIGHT else 0,
-                uOffset = if (!left) if(isCompact) 10 else 0 else 0
+                uOffset = if (!left) if (isCompact) 10 else 0 else 0
             )
             if (effectivenessText != null && !isPlayer) {
                 val textRenderer = Minecraft.getInstance().font
-                val textOffset = textRenderer.width(effectivenessText.font(CobblemonResources.DEFAULT_LARGE).bold()) / 2
-                val centeredOffsetX = if(isCompact) 12 else 21/2
+                val textOffset =
+                    textRenderer.width(effectivenessText.font(CobblemonResources.DEFAULT_LARGE).bold()) / 2
+                val centeredOffsetX = if (isCompact) 12 else 21 / 2
 
                 drawScaledText(
                     context = context,
                     font = CobblemonResources.DEFAULT_LARGE,
                     text = effectivenessText.bold(),
-                    x = x0 + if(left) centeredOffsetX - textOffset else -(centeredOffsetX + textOffset),
+                    x = x0 + if (left) centeredOffsetX - textOffset else -(centeredOffsetX + textOffset),
                     y = y + if (isCompact) 6 else 8,
                     shadow = true
                 )
@@ -152,7 +159,7 @@ object EffectivenessRenderer {
         var primaryType: ElementalType? = opponentForm.primaryType
         var secondaryType: ElementalType? = opponentForm.secondaryType
 
-        if (typeChangeList != null && ModConfig.getInstance().isEnabled("type_changes")) {
+        if (typeChangeList != null && config!!.typeChanges) {
             if (typeChangeList.isNotEmpty()) {
                 primaryType = typeChangeList.getOrNull(0) ?: primaryType // Use the first element if available, otherwise keep the original type
                 secondaryType = typeChangeList.getOrNull(1) // Use the second element if available, otherwise NULL mainly cuz of Soak type moves

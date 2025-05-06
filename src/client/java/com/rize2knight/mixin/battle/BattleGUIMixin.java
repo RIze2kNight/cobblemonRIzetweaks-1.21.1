@@ -4,7 +4,9 @@ import com.cobblemon.mod.common.api.Priority;
 import com.cobblemon.mod.common.api.types.ElementalType;
 import com.cobblemon.mod.common.api.types.ElementalTypes;
 import com.cobblemon.mod.common.client.gui.battle.BattleGUI;
+import com.rize2knight.CobblemonRizeTweaksClient;
 import com.rize2knight.EffectivenessRenderer;
+import com.rize2knight.config.BattleGUIRendererStyle;
 import com.rize2knight.config.ModConfig;
 import com.rize2knight.util.BattleMessageQueue;
 import net.minecraft.client.gui.GuiGraphics;
@@ -22,16 +24,13 @@ import static com.cobblemon.mod.common.api.events.CobblemonEvents.*;
 
 @Mixin(BattleGUI.class)
 public class BattleGUIMixin {
-    @Unique
-    private boolean isSubscribed = false;
+    @Unique private boolean isSubscribed = false;
     @Unique final Map<String, List<ElementalType>> battleTypeChanges = new HashMap<>();
 
     @Inject(method = "render", at = @At("TAIL"))
     private void render(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        if(ModConfig.getInstance().isEnabled("move_tips")) {
-            ensureSubscribed();
-            EffectivenessRenderer.INSTANCE.render(context, mouseX, mouseY, battleTypeChanges);
-        }
+        ensureSubscribed();
+        EffectivenessRenderer.INSTANCE.render(context, mouseX, mouseY, battleTypeChanges);
     }
 
     @Unique

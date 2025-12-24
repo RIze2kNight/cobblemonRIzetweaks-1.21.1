@@ -19,7 +19,7 @@ object MoveEffectivenessCalculator {
 
         listOfNotNull(defenderType1, defenderType2).forEach { type ->
             move.let { damageMult *= getDamageMult(it.name, type.name) }
-            damageMult *= getDamageMult(moveType.name, type.name)
+            damageMult *= getDamageMult(moveType.showdownId, type.showdownId)
         }
 
         return damageMult

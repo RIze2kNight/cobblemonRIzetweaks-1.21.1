@@ -7,7 +7,6 @@ import com.cobblemon.mod.common.api.text.bold
 import com.cobblemon.mod.common.api.text.font
 import com.cobblemon.mod.common.api.types.ElementalType
 import com.cobblemon.mod.common.battles.BattleFormat
-import com.cobblemon.mod.common.client.CobblemonClient
 import com.cobblemon.mod.common.client.CobblemonClient.battle
 import com.cobblemon.mod.common.client.CobblemonResources
 import com.cobblemon.mod.common.client.battle.ActiveClientBattlePokemon
@@ -49,8 +48,8 @@ object EffectivenessRenderer {
     private var typeChangesList : Map<String,MutableList<ElementalType>>? = null
     var moveTile : BattleMoveSelection.MoveTile? = null
 
-    fun render(context: GuiGraphics, x: Float, y: Float, typeChanges: Map<String,MutableList<ElementalType>>){
-        val battle = CobblemonClient.battle ?: return
+    fun render(context: GuiGraphics, typeChanges: Map<String,MutableList<ElementalType>>){
+        val battle = battle ?: return
         val playerUUID = playerUUID ?: return
         if(moveTile == null) return
 
@@ -73,7 +72,7 @@ object EffectivenessRenderer {
     }
 
     private fun renderIfHovered(context: GuiGraphics, activeBattlePokemon: ActiveClientBattlePokemon, left: Boolean, rank: Int) {
-        // Prevent render if pokemon is currently being swapped out or is player pokemon
+        // Prevent render if Pokémon is currently being swapped out or is player Pokémon
         if (activeBattlePokemon.animations.peek() !== null ||
             playerPokemon == null) return
         val move = moveTile?.move ?: return
@@ -117,8 +116,8 @@ object EffectivenessRenderer {
 
             UITweaksEffectiveness.set(dmgMultiplier)
 
-            if(config!!.battleGUIStyle == BattleGUIRendererStyle.CobblemonUITweaks || config.battleGUIStyle == BattleGUIRendererStyle.DISABLE) return
-            if(config.battleGUIStyle == BattleGUIRendererStyle.RIzeMultiBattle && battle!!.battleFormat.battleType.name.equals(BattleFormat.GEN_9_SINGLES.battleType.name)) return
+            if(config!!.battleGUIStyle == BattleGUIRendererStyle.DISABLE) return
+            if(config.battleGUIStyle == BattleGUIRendererStyle.RIzeMultiBattle && battle!!.battleFormat.battleType.name == BattleFormat.GEN_9_SINGLES.battleType.name) return
             blitk(
                 matrixStack = matrixStack,
                 texture = if (isPlayer) (if (multiTargetList != null) multiTarget else singleTarget)

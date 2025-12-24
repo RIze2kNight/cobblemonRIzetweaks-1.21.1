@@ -2,9 +2,6 @@ package com.rize2knight.mixin.UITweaks;
 
 import ca.landonjw.MoveHoverRenderer;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
-import com.cobblemon.mod.common.battles.BattleFormat;
-import com.cobblemon.mod.common.client.CobblemonClient;
-import com.cobblemon.mod.common.client.battle.ClientBattle;
 import com.rize2knight.CobblemonRizeTweaksClient;
 import com.rize2knight.config.BattleGUIRendererStyle;
 import com.rize2knight.config.ModConfig;
@@ -24,7 +21,8 @@ public class MoveHoverRendererMixin{
 
     @Inject(method = "render", at = @At(value = "HEAD"), cancellable = true)
     private void RIzeRender(GuiGraphics context, float x, float y, MoveTemplate move, CallbackInfo ci){
-        if(config.battleGUIStyle == BattleGUIRendererStyle.RIzeTweaks || config.battleGUIStyle == BattleGUIRendererStyle.DISABLE) { ci.cancel(); }
+        if( /*config.battleGUIStyle == BattleGUIRendererStyle.RIzeTweaks || */
+            config.battleGUIStyle == BattleGUIRendererStyle.DISABLE) { ci.cancel(); }
     }
     /*
     *   Modifies CobblemonUITweaks Move Effectiveness to implement type changes from this mod.

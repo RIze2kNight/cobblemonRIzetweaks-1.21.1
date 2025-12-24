@@ -9,7 +9,9 @@
     "battle.move.BattleMoveSelectionMixin",
     "pc.InfoWidgetMixin",
     "pc.PCGUIMixin",
-    "UITweaks.MoveHoverRendererMixin"
+    "pc.BoxNameWidgetMixin",
+    "UITweaks.MoveHoverRendererMixin",
+    "accessor.PCGUIAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

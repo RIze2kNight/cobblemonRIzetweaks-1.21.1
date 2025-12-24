@@ -4,10 +4,7 @@ import com.cobblemon.mod.common.api.Priority;
 import com.cobblemon.mod.common.api.types.ElementalType;
 import com.cobblemon.mod.common.api.types.ElementalTypes;
 import com.cobblemon.mod.common.client.gui.battle.BattleGUI;
-import com.rize2knight.CobblemonRizeTweaksClient;
 import com.rize2knight.EffectivenessRenderer;
-import com.rize2knight.config.BattleGUIRendererStyle;
-import com.rize2knight.config.ModConfig;
 import com.rize2knight.util.BattleMessageQueue;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.MutableComponent;
@@ -30,7 +27,7 @@ public class BattleGUIMixin {
     @Inject(method = "render", at = @At("TAIL"))
     private void render(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         ensureSubscribed();
-        EffectivenessRenderer.INSTANCE.render(context, mouseX, mouseY, battleTypeChanges);
+        EffectivenessRenderer.INSTANCE.render(context, battleTypeChanges);
     }
 
     @Unique
@@ -47,12 +44,12 @@ public class BattleGUIMixin {
                     Object[] args = contents.getArgs();
                     if(args.length >= 2) {
                         String[] newType = args[1].toString().split("/");
-                        if (ElementalTypes.INSTANCE.get(newType[0]) != null) {
+                        if (ElementalTypes.get(newType[0]) != null) {
                             String owner = null;
                             String pokemonName = null;
                             List<ElementalType> newTypes = new ArrayList<>();
 
-                            for (String type : newType) { newTypes.add(ElementalTypes.INSTANCE.get(type)); }
+                            for (String type : newType) { newTypes.add(ElementalTypes.get(type)); }
 
                             // Extract owner and Pokémon name from the first argument
                             if (args[0] instanceof MutableComponent PokemonComponent

@@ -8,7 +8,6 @@ import com.cobblemon.mod.relocations.graalvm.polyglot.HostAccess
 import com.cobblemon.mod.relocations.graalvm.polyglot.PolyglotAccess
 import com.cobblemon.mod.relocations.graalvm.polyglot.io.FileSystem
 import java.io.File
-import java.nio.file.Paths
 
 class GraalTypeChart{
     @Transient lateinit var context: Context
@@ -31,7 +30,6 @@ class GraalTypeChart{
     }
 
     private fun createContext() {
-        val wd = Paths.get("./showdown")
         val access = HostAccess.newBuilder(HostAccess.EXPLICIT)
             .allowIterableAccess(true)
             .allowArrayAccess(true)

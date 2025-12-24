@@ -1,10 +1,11 @@
 {
+  "text.autoconfig.cobblemonrizetweaks.title": "Cobblemon RIzeTweaks Config",
   "text.autoconfig.cobblemonrizetweaks.category.RIzeTweaks": "RIzeTweaks",
-  "text.autoconfig.cobblemonrizetweaks.category.Fixes": "CobblemonUITweaks Fixes",
   "text.autoconfig.cobblemonrizetweaks.option.pcBoxJump": "Toggle PC Box Jumping",
   "text.autoconfig.cobblemonrizetweaks.option.HAHightlighter": "Toggle Hidden Ability Highlighter",
   "text.autoconfig.cobblemonrizetweaks.option.typeChanges": "Toggle In-Battle Type Changes",
   "text.autoconfig.cobblemonrizetweaks.option.battleGUIStyle": "Toggle Move Helper GUI Options",
-  "text.autoconfig.cobblemonrizetweaks.option.uiTweaks_pcScrollFix": "Toggle CobblemonUITweaks PC Scroll Fix(Temp)",
-  "text.autoconfig.cobblemonrizetweaks.option.uiTweaks_lastPCBoxFix": "Toggle CobblemonUITweaks Save Last PC Box(Temp)"
+
+  "key.cobblemonrizetweaks.jumpPCBox": "Enable PC Box Jump",
+  "key.categories.cobblemonrizetweaks": "RIzeTweaks"
 }

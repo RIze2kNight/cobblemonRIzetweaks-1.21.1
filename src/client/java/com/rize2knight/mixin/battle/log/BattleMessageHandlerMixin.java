@@ -1,7 +1,6 @@
 package com.rize2knight.mixin.battle.log;
 
 import com.cobblemon.mod.common.api.net.ClientNetworkPacketHandler;
-import com.cobblemon.mod.common.api.net.NetworkPacket;
 import com.cobblemon.mod.common.client.net.battle.BattleMessageHandler;
 import com.cobblemon.mod.common.net.messages.client.battle.BattleMessagePacket;
 import com.rize2knight.util.BattleMessageQueue;

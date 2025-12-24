@@ -19,17 +19,9 @@ public class ModConfig implements ConfigData {
 
     @ConfigEntry.Category("RIzeTweaks") @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
     @Comment("""
-                ALL: Renders both CobblemonUITweaks and RIzeTweaks Move Helpers.
-                RIzeTweaks: Only renders RIzeTweaks Move Helper.
+                ALL: Renders RIzeTweaks Move Helper for Single and Doubles.
                 RIzeMultiBattle: Only renders RIzeTweaks Move Helper during multi-battles.
-                CobblemonUITweaks: Only renders CobblemonUITweaks Move Helper.
                 DISABLE: Disable all Move Helpers.
                 """)
     public BattleGUIRendererStyle battleGUIStyle = BattleGUIRendererStyle.ALL;
-
-    @ConfigEntry.Category("Fixes")
-    public boolean uiTweaks_pcScrollFix = true;
-
-    @ConfigEntry.Category("Fixes")
-    public boolean uiTweaks_lastPCBoxFix = true;
 }

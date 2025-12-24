@@ -2,7 +2,7 @@
 A QoL mod for Cobblemon
 
 Features(Yay I'm not a bum):
-- Edit PC Box number to jump to it (Press Enter to jump)
+- Jump to a specific PC box by clicking on the Box title while holding Box Jump Key (Default: L Alt) to edit box number. Press Enter to move to specified box.
 - Hidden Ability Highlighter in PC and Summary
 - Battle Move Tips
     - Multi Battle Support

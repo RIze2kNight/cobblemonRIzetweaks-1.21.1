@@ -16,6 +16,7 @@ public abstract class BattleMessageHandlerMixin implements ClientNetworkPacketHa
 
     @Inject(method = "handle*", at = @At("TAIL"))
     public void cobblemon_ui_tweaks$handle(@NotNull BattleMessagePacket packet, @NotNull Minecraft client, CallbackInfo ci) {
+        //Add Battle Messages to mod custom Battle Message Queue
         BattleMessageQueue.add(packet.getMessages());
     }
 

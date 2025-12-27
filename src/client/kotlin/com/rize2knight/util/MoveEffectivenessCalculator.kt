@@ -1,8 +1,7 @@
-package com.rize2knight
+package com.rize2knight.util
 
 import com.cobblemon.mod.common.api.moves.MoveTemplate
 import com.cobblemon.mod.common.api.types.ElementalType
-import com.rize2knight.util.GraalTypeChart
 
 object MoveEffectivenessCalculator {
     private val typeChart: HashMap<String, HashMap<String, Float>> = HashMap()
@@ -13,6 +12,7 @@ object MoveEffectivenessCalculator {
         graalTypeChart.getTypeChart(typeChart)
     }
 
+    // Calculates the damage multiplier of a move against a defender with up to two types
     fun getMoveDamageMult(move: MoveTemplate, defenderType1: ElementalType?, defenderType2: ElementalType?): Float {
         val moveType = move.elementalType
         var damageMult = 1f

@@ -18,6 +18,7 @@ class GraalTypeChart{
         "showdown/data/mods/cobblemon/typechart.js"
     )
 
+    // Opens a GraalVM context and loads the TypeChart data from the specified file paths.
     fun openConnection() {
         unbundler.attemptUnbundle()
         createContext()
@@ -29,6 +30,7 @@ class GraalTypeChart{
         }
     }
 
+    // Creates a GraalVM context with specific host access and options.
     private fun createContext() {
         val access = HostAccess.newBuilder(HostAccess.EXPLICIT)
             .allowIterableAccess(true)
@@ -65,6 +67,7 @@ class GraalTypeChart{
         """.trimIndent())
     }
 
+    // Extracts the type chart data from the GraalVM context and populates the provided typeChart map.
     fun getTypeChart(typeChart : HashMap<String, HashMap<String, Float>>){
         val cobbleTypeChart = context.getBindings("js").getMember("TypeChart")
         val keys = cobbleTypeChart.memberKeys
@@ -82,6 +85,7 @@ class GraalTypeChart{
         }
     }
 
+    // Converts the damage multiplier index to a float value.
     private fun getDmgMult(index : Int) : Float{
         return when (index) {
             1 -> 2f  // Super Effective

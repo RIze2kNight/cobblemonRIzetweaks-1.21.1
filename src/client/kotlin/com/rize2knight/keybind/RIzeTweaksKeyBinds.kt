@@ -1,5 +1,6 @@
 package com.rize2knight.keybind
 
+import com.rize2knight.CobblemonRizeTweaksClient
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.minecraft.client.KeyMapping
 
@@ -14,6 +15,7 @@ object RIzeTweaksKeyBinds {
         ClientTickEvents.END_CLIENT_TICK.register {
             binds.forEach { it.handleTick() }
         }
+        CobblemonRizeTweaksClient.LOGGER.info("CobblemonRIzeTweaks Keybinds Initialised")
     }
 
     fun <T : RIzeTweakKeyBinding> add(bind: T): T {

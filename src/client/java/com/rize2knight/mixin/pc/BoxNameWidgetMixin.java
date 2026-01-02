@@ -8,7 +8,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.rize2knight.CobblemonRizeTweaksClient;
 import com.rize2knight.config.ModConfig;
 import com.rize2knight.keybind.keybinds.JumpPCBoxKey;
-import com.rize2knight.util.JumpPCBoxToggle;
+import com.rize2knight.util.RIzeTweaksUtil;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -16,7 +16,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -34,11 +33,10 @@ public abstract class BoxNameWidgetMixin extends TextWidget {
     @Final @Shadow(remap = false) private PCGUI pcGui;
 
     @Unique private static ModConfig config = CobblemonRizeTweaksClient.INSTANCE.getConfig();
-    @Unique private static final Logger LOGGER = CobblemonRizeTweaksClient.INSTANCE.getLOGGER();
 
     public BoxNameWidgetMixin(int pX, int pY, int width, int height, int maxLength, @NotNull Component text, @NotNull Function0<Unit> update) {
         super(pX, pY, width, height, maxLength, text, update);
-        LOGGER.info("Initializing BoxNameWidgetMixin");
+        CobblemonRizeTweaksClient.LOGGER.info("Initializing BoxNameWidgetMixin");
     }
 
     @ModifyArg(
@@ -50,7 +48,8 @@ public abstract class BoxNameWidgetMixin extends TextWidget {
             index = 2
     )
     private MutableComponent modifyBoxNameWidgetText(MutableComponent originalBoxName){
-        if(config.pcBoxJump && JumpPCBoxToggle.enabled && isFocused()) {
+        //Conditional Render of PC Box Jump text when keybind pressed
+        if(config.pcBoxJump && RIzeTweaksUtil.enablePCBoxJump && isFocused()) {
             return Component.translatable(
                     "cobblemon.ui.pc.box.title",
                     this.getValue() + "|"
@@ -64,12 +63,13 @@ public abstract class BoxNameWidgetMixin extends TextWidget {
     private void overrideKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir){
         if(!config.pcBoxJump) return;
 
-        if (keyCode == InputConstants.KEY_RETURN && JumpPCBoxToggle.enabled){
+        //Goes to specific box upon pressing enter
+        if (keyCode == InputConstants.KEY_RETURN && RIzeTweaksUtil.enablePCBoxJump){
             updateNewPCBox();
 
             //Unfocuses and resets to default box name behaviour
             setFocused(false);
-            JumpPCBoxToggle.enabled = false;
+            RIzeTweaksUtil.enablePCBoxJump = false;
             setValue("");
 
             cir.setReturnValue(true);
@@ -80,19 +80,22 @@ public abstract class BoxNameWidgetMixin extends TextWidget {
         if(isFocused() && keyCode == InputConstants.KEY_ESCAPE){
             setValue("");
             setFocused(false);
-            JumpPCBoxToggle.enabled = false;
+            RIzeTweaksUtil.enablePCBoxJump = false;
         }
     }
 
     @Inject(method = "setFocused", at = @At(value = "HEAD"), cancellable = true)
     private void overrideSetFocused(boolean focused, CallbackInfo ci){
         if(!config.pcBoxJump) return;
+
+        //Checks if PC Box Jump keybind is held down
         var window = Minecraft.getInstance().getWindow();
         var boundKey = KeyBindingHelper.getBoundKeyOf(JumpPCBoxKey.INSTANCE.mapping);
         var isJumpPCBoxKeyHeld = InputConstants.isKeyDown(window.getWindow(), boundKey.getValue());
 
+        //Focuses Box Name Widget in PCBoxJump mode
         if(isJumpPCBoxKeyHeld && focused){
-            JumpPCBoxToggle.enabled = true;
+            RIzeTweaksUtil.enablePCBoxJump = true;
             setValue("");
 
             super.setFocused(true);
@@ -106,9 +109,9 @@ public abstract class BoxNameWidgetMixin extends TextWidget {
         if(!config.pcBoxJump) return;
 
         //Resets to default box name behaviour (Maybe?)
-        if (JumpPCBoxToggle.enabled) {
+        if (RIzeTweaksUtil.enablePCBoxJump) {
             setValue("");
-            JumpPCBoxToggle.enabled = false;
+            RIzeTweaksUtil.enablePCBoxJump = false;
             // Cancel original unfocused so it doesn't send rename packet / clear value again
             ci.cancel();
         }

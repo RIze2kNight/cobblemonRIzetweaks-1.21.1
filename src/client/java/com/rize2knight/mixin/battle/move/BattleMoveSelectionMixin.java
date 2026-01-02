@@ -1,7 +1,7 @@
 package com.rize2knight.mixin.battle.move;
 
 import com.cobblemon.mod.common.client.gui.battle.subscreen.BattleMoveSelection;
-import com.rize2knight.EffectivenessRenderer;
+import com.rize2knight.gui.EffectivenessRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -17,8 +17,10 @@ public class BattleMoveSelectionMixin {
 
     @Inject(method = "renderWidget", at = @At("TAIL"))
     public void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+        //Checks every BattleUI Move selection tile if its hovered
         this.moveTiles.forEach(tile -> {
             if(tile.isHovered(mouseX, mouseY)) {
+                //Renders custom Effectiveness render
                 EffectivenessRenderer.INSTANCE.setMoveTile(tile);
             }
         });

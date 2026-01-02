@@ -1,4 +1,4 @@
-package com.rize2knight
+package com.rize2knight.gui
 
 import com.cobblemon.mod.common.api.gui.blitk
 import com.cobblemon.mod.common.api.moves.MoveTemplate
@@ -19,7 +19,9 @@ import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.VERTIC
 import com.cobblemon.mod.common.client.gui.battle.BattleOverlay.Companion.VERTICAL_SPACING
 import com.cobblemon.mod.common.client.gui.battle.subscreen.BattleMoveSelection
 import com.cobblemon.mod.common.client.render.drawScaledText
+import com.rize2knight.CobblemonRizeTweaksClient
 import com.rize2knight.config.BattleGUIRendererStyle
+import com.rize2knight.util.MoveEffectivenessCalculator
 import com.rize2knight.util.ReflectionUtils
 import com.rize2knight.util.UITweaksEffectiveness
 import net.minecraft.client.Minecraft
@@ -55,14 +57,17 @@ object EffectivenessRenderer {
 
         typeChangesList = typeChanges
 
+        // Determine player's side and opponent's side
         val playerSide = if (battle.side1.actors.any { it.uuid == playerUUID }) battle.side1 else battle.side2
         val opponentSide = if (playerSide == battle.side1) battle.side2 else battle.side1
 
+        // Find the player's active Pokémon corresponding to the move being selected
         playerPokemon = playerSide.actors.find { it.uuid == playerUUID }?.activePokemon?.find { it.battlePokemon?.uuid == moveTile!!.pokemon?.uuid }
         playerSide.activeClientBattlePokemon.forEachIndexed { index, activeClientBattlePokemon ->
             renderIfHovered(context, activeClientBattlePokemon, true, index)
         }
 
+        // Render opponent side in reverse order to match battle layout
         opponentSide.activeClientBattlePokemon.reversed().forEachIndexed { index, activeClientBattlePokemon ->
             renderIfHovered(context, activeClientBattlePokemon, false, index)
         }
@@ -78,12 +83,13 @@ object EffectivenessRenderer {
         val move = moveTile?.move ?: return
         val isPlayer = activeBattlePokemon.getPNX() == playerPokemon!!.getPNX()
 
+        // Determine if the activeBattlePokemon is a valid target for the selected move
         val selectableTargetList = move.target.targetList(playerPokemon!!)
         val multiTargetList = if(selectableTargetList == null) playerPokemon!!.getMultiTargetList(move.target) else null
         val isTarget = selectableTargetList?.firstOrNull { it.getPNX() == activeBattlePokemon.getPNX() }?.getPNX()
 //        val isMultiTarget = multiTargetList?.any { it.getPNX() == activeBattlePokemon.getPNX() }
 
-
+        // Render effectiveness only if the activeBattlePokemon is a valid target or is the player's Pokémon
         if((isTarget != null || multiTargetList != null || isPlayer) && moveTile!!.moveTemplate.damageCategory != DamageCategories.STATUS) {
             val playerNumberOffset = (activeBattlePokemon.getActorShowdownId()[1].digitToInt() - 1) / 2 * 10
             val isCompact = battle?.battleFormat?.battleType?.pokemonPerSide!! > 1
@@ -116,6 +122,7 @@ object EffectivenessRenderer {
 
             UITweaksEffectiveness.set(dmgMultiplier)
 
+            // Render Config Options Logic
             if(config!!.battleGUIStyle == BattleGUIRendererStyle.DISABLE) return
             if(config.battleGUIStyle == BattleGUIRendererStyle.RIzeMultiBattle && battle!!.battleFormat.battleType.name == BattleFormat.GEN_9_SINGLES.battleType.name) return
             blitk(
@@ -148,12 +155,14 @@ object EffectivenessRenderer {
         }
     }
 
+    // Calculate move effectiveness considering type changes
     private fun getMoveEffectiveness(move: MoveTemplate, activeBattlePokemon: ActiveClientBattlePokemon): Float? {
         val opponent = activeBattlePokemon.battlePokemon ?: return null
         val aspects: Set<String> = ReflectionUtils.getPrivateField(opponent, "aspects") ?: return null
 
         val opponentForm = opponent.species.getForm(aspects)
 
+        // Get type changes if any
         val typeChangeList = getTypeChanges(activeBattlePokemon)
         var primaryType: ElementalType? = opponentForm.primaryType
         var secondaryType: ElementalType? = opponentForm.secondaryType
@@ -170,6 +179,7 @@ object EffectivenessRenderer {
         return damageMultiplier
     }
 
+    // Get type changes based on the opponent's owner and name
     private fun getTypeChanges(opponent: ActiveClientBattlePokemon): List<ElementalType>? {
         var typeChangeList: List<ElementalType>? = null
         val ownerName = when (val owner = opponent.actor.displayName.contents){

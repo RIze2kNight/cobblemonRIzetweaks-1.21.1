@@ -17,6 +17,9 @@ public class ModConfig implements ConfigData {
     @ConfigEntry.Category("RIzeTweaks")
     public boolean typeChanges = true;
 
+    @ConfigEntry.Category("RIzeTweaks")
+    public boolean summaryTabScroll = true;
+
     @ConfigEntry.Category("RIzeTweaks") @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
     @Comment("""
                 ALL: Renders RIzeTweaks Move Helper for Single and Doubles.

@@ -10,8 +10,9 @@
     "pc.InfoWidgetMixin",
     "pc.PCGUIMixin",
     "pc.BoxNameWidgetMixin",
+    "pc.SummaryMixin",
     "UITweaks.MoveHoverRendererMixin",
-    "accessor.PCGUIAccessor"
+    "accessor.MovesWidgetAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

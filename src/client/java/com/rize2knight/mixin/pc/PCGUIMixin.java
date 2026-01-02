@@ -1,12 +1,17 @@
 package com.rize2knight.mixin.pc;
 
 import com.cobblemon.mod.common.client.gui.pc.BoxNameWidget;
+import com.cobblemon.mod.common.client.gui.summary.Summary;
+import com.cobblemon.mod.common.client.keybind.CobblemonKeyBinds;
+import com.cobblemon.mod.common.mixin.accessor.KeyBindingAccessor;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.client.gui.pc.PCGUI;
 import com.cobblemon.mod.common.client.gui.pc.StorageWidget;
 import com.cobblemon.mod.common.pokemon.abilities.HiddenAbility;
 import com.rize2knight.CobblemonRizeTweaksClient;
 import com.rize2knight.config.ModConfig;
+import com.rize2knight.util.RIzeTweaksUtil;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -14,15 +19,14 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import com.rize2knight.util.JumpPCBoxToggle;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.List;
 
 @Mixin(value = PCGUI.class, priority = 1001)
 public abstract class PCGUIMixin extends Screen {
@@ -32,14 +36,13 @@ public abstract class PCGUIMixin extends Screen {
     @Shadow public abstract void render(@NotNull GuiGraphics context, int mouseX, int mouseY, float delta);
     @Shadow(remap = false) private Pokemon previewPokemon = null;
     @Shadow(remap = false) private BoxNameWidget boxNameWidget;
+    @Mutable @Shadow(remap = false) @Final private int openOnBox;
 
     @Unique private Integer lastBox = -1;
 
-    @Unique private static final Logger LOGGER = CobblemonRizeTweaksClient.INSTANCE.getLOGGER();
-
     protected PCGUIMixin(Component component) {
         super(component);
-        LOGGER.info("Initializing PCGUIMixin with storageWidget: {}", storageWidget);
+        CobblemonRizeTweaksClient.LOGGER.info("Initializing PCGUIMixin with storageWidget: {}", storageWidget);
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
@@ -52,9 +55,9 @@ public abstract class PCGUIMixin extends Screen {
         if (boxNameWidget == null) return;
 
         //Unfocuses jumpBox / Modified Box name if enabled and toggles off
-        if(boxNameWidget.isFocused() && JumpPCBoxToggle.enabled){
+        if(boxNameWidget.isFocused() && RIzeTweaksUtil.enablePCBoxJump){
             boxNameWidget.setFocused(false);
-            JumpPCBoxToggle.enabled = false;
+            RIzeTweaksUtil.enablePCBoxJump = false;
         }
     }
 
@@ -68,12 +71,34 @@ public abstract class PCGUIMixin extends Screen {
             index = 2
     )
     private MutableComponent overrideAbilityNameDisplay(MutableComponent text){
+        //Replace Ability Text with HA highlighted text
         if(previewPokemon != null && config.HAHightlighter){
             if(hasHiddenAbility(previewPokemon)){
                 return text.withStyle(Style.EMPTY.withColor(TextColor.fromRgb(0xFFD700)));
             }
         }
         return text;
+    }
+
+    @Inject(method = "keyPressed", at = @At(value = "HEAD"))
+    private void overrideKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir){
+        var summaryKey = (KeyBindingAccessor) CobblemonKeyBinds.INSTANCE.getSUMMARY();
+
+        //Opens Summary from PC when Summary Key is pressed
+        if(keyCode == summaryKey.boundKey().getValue()){
+            try{
+                //Updates PC to open on the most recent PC Box set
+                this.openOnBox = this.storageWidget.getBox();
+
+                RIzeTweaksUtil.summaryOpenedFromPC = true;
+                RIzeTweaksUtil.pcGUI = (PCGUI) Minecraft.getInstance().screen;
+
+                Summary.Companion.open(List.of(previewPokemon),true,0);
+            }
+            catch (Exception e) {
+                CobblemonRizeTweaksClient.LOGGER.debug("Failed to open summary inside PC");
+            }
+        }
     }
 
     @Unique

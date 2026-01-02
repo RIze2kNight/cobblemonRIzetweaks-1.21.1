@@ -4,7 +4,8 @@ import com.cobblemon.mod.common.api.Priority;
 import com.cobblemon.mod.common.api.types.ElementalType;
 import com.cobblemon.mod.common.api.types.ElementalTypes;
 import com.cobblemon.mod.common.client.gui.battle.BattleGUI;
-import com.rize2knight.EffectivenessRenderer;
+import com.rize2knight.CobblemonRizeTweaksClient;
+import com.rize2knight.gui.EffectivenessRenderer;
 import com.rize2knight.util.BattleMessageQueue;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.MutableComponent;
@@ -28,6 +29,8 @@ public class BattleGUIMixin {
     private void render(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         ensureSubscribed();
         EffectivenessRenderer.INSTANCE.render(context, battleTypeChanges);
+
+        CobblemonRizeTweaksClient.LOGGER.info("CobblemonRIzeTweaks Battle Effectiveness Initialised");
     }
 
     @Unique
@@ -39,6 +42,7 @@ public class BattleGUIMixin {
             BattleMessageQueue battleMessageQueue = BattleMessageQueue.INSTANCE;
             BATTLE_STARTED_PRE.subscribe(Priority.NORMAL, battleStartedPreEvent -> {battleMessageQueue.clearBattleMessages(); return null;});
 
+            // Subscribe to battle messages to track type changes
             BattleMessageQueue.subscribe(message -> {
                 if(message.getContents() instanceof TranslatableContents contents){
                     Object[] args = contents.getArgs();

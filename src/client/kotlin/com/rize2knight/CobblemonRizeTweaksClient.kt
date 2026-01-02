@@ -6,12 +6,13 @@ import me.shedaniel.autoconfig.AutoConfig
 import me.shedaniel.autoconfig.annotation.Config
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer
 import net.fabricmc.api.ClientModInitializer
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 
 object CobblemonRizeTweaksClient : ClientModInitializer {
-	val LOGGER: Logger = LoggerFactory.getLogger("cobblemonrizetweaks")
+	@JvmField
+    val LOGGER: Logger = LogManager.getLogger("cobblemonrizetweaks")
 	const val MODID = "cobblemonrizetweaks"
 	var config: ModConfig? = null
 

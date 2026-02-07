@@ -67,7 +67,9 @@ dependencies {
 
 	//Testing
 	modImplementation(files("/deps/authme-8.0.0+1.21.jar"))
-//	modImplementation(files("/deps/cobblemon-trainer-battle-1.10.8+1.7.0.hotfix.3.jar"))
+	modImplementation(files("/deps/packetfixer-3.3.1-1.20.5-1.21.X-merged.jar"))
+    modImplementation(files("/deps/DeltaClient-5.0.0.jar"))
+    modImplementation(files("/deps/xlpackets-1.0.5-1.21.jar"))
 	modImplementation(files("/deps/modmenu-11.0.3.jar"))
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 

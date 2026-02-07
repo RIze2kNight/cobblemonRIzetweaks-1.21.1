@@ -34,7 +34,7 @@ public abstract class PCGUIMixin extends Screen {
 
     @Shadow(remap = false) private StorageWidget storageWidget;
     @Shadow public abstract void render(@NotNull GuiGraphics context, int mouseX, int mouseY, float delta);
-    @Shadow(remap = false) private Pokemon previewPokemon = null;
+    @Shadow(remap = false) private Pokemon previewPokemon;
     @Shadow(remap = false) private BoxNameWidget boxNameWidget;
     @Mutable @Shadow(remap = false) @Final private int openOnBox;
 
@@ -80,25 +80,30 @@ public abstract class PCGUIMixin extends Screen {
         return text;
     }
 
-    @Inject(method = "keyPressed", at = @At(value = "HEAD"))
+    @Inject(method = "keyPressed", at = @At(value = "HEAD"), cancellable = true)
     private void overrideKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir){
         var summaryKey = (KeyBindingAccessor) CobblemonKeyBinds.INSTANCE.getSUMMARY();
 
+        if (keyCode != summaryKey.boundKey().getValue()) return;
+        // Prevent vanilla handling no matter what
+        cir.setReturnValue(true);
+        cir.cancel();
+
+        if (RIzeTweaksUtil.summaryOpenedFromPC || previewPokemon == null) return;
+
         //Opens Summary from PC when Summary Key is pressed
-        if(keyCode == summaryKey.boundKey().getValue()){
-            try{
-                //Updates PC to open on the most recent PC Box set
-                this.openOnBox = this.storageWidget.getBox();
+        //PCGUI reference for reopening later
+        this.openOnBox = this.storageWidget.getBox();
+        Screen previous = Minecraft.getInstance().screen;
 
+        Summary.Companion.open(List.of(previewPokemon),true,0);
+
+        Minecraft.getInstance().execute(() -> {
+            if(Minecraft.getInstance().screen instanceof Summary && previous != null){
                 RIzeTweaksUtil.summaryOpenedFromPC = true;
-                RIzeTweaksUtil.pcGUI = (PCGUI) Minecraft.getInstance().screen;
-
-                Summary.Companion.open(List.of(previewPokemon),true,0);
+                RIzeTweaksUtil.pcGUI = (PCGUI) previous;
             }
-            catch (Exception e) {
-                CobblemonRizeTweaksClient.LOGGER.debug("Failed to open summary inside PC");
-            }
-        }
+        });
     }
 
     @Unique
